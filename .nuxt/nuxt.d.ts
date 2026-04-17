@@ -1,4 +1,5 @@
 /// <reference types="@nuxt/telemetry" />
+/// <reference types="@prisma/nuxt" />
 /// <reference types="@nuxt/devtools" />
 /// <reference path="types/nitro-layouts.d.ts" />
 /// <reference path="types/builder-env.d.ts" />

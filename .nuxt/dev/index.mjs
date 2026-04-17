@@ -650,10 +650,16 @@ const _inlineRuntimeConfig = {
       }
     }
   },
-  "public": {},
+  "public": {
+    "prisma": {
+      "log": [],
+      "errorFormat": "pretty"
+    }
+  },
   "CLOUDINARY_CLOUD_NAME": "dnf00mh7g",
   "CLOUDINARY_API_KEY": "584498369853867",
-  "CLOUDINARY_API_SECRET": "jq7-ItHWrlnzQ2mLdi-DpM5B45Q"
+  "CLOUDINARY_API_SECRET": "jq7-ItHWrlnzQ2mLdi-DpM5B45Q",
+  "databaseUrl": "mongodb+srv://yordisdurango_db_user:00Ht1QZGBRxJj2YJ@burbuarchivo.30vybjv.mongodb.net/burbuarchivos?retryWrites=true&w=majority&appName=BurbuArchivo"
 };
 const envOptions = {
   prefix: "NITRO_",

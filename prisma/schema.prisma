@@ -15,18 +15,18 @@ model User {
   role      String   @default("user")
   createdAt DateTime @default(now())
 
-  images    Image[]
+  images Image[]
 }
 
 model Image {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
   title        String
-  slug         String   @unique
+  slug         String  @unique
   urlOriginal  String
   urlWatermark String?
-  visibility   String   @default("public")
-  downloadable Boolean  @default(false)
-  seoEnabled   Boolean  @default(true)
+  visibility   String  @default("public")
+  downloadable Boolean @default(false)
+  seoEnabled   Boolean @default(true)
 
   userId String @db.ObjectId
   user   User   @relation(fields: [userId], references: [id])
