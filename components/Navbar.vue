@@ -94,17 +94,36 @@
 </template>
 
 <script setup lang="ts">
-// TODO: Implementar lógica de autenticación
+import { ref, onMounted } from 'vue'
+import { navigateTo } from '#app'
+
 const isLoggedIn = ref(false)
 const user = ref(null)
 
-// const { data: authData } = await useAuth()
-// isLoggedIn.value = !!authData.value?.user
-// user.value = authData.value?.user
+onMounted(async () => {
+  try {
+    const res = await fetch('/api/auth/me')
+    if (res.ok) {
+      const data = await res.json()
+      user.value = data.user
+      isLoggedIn.value = true
+    }
+  } catch (err) {
+    isLoggedIn.value = false
+    user.value = null
+  }
+})
 
-const logout = () => {
-  // TODO: Implementar logout
-  console.log('Logout')
+const logout = async (e) => {
+  e.preventDefault()
+  try {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    isLoggedIn.value = false
+    user.value = null
+    await navigateTo('/login')
+  } catch (err) {
+    // Error handled silently
+  }
 }
 </script>
 

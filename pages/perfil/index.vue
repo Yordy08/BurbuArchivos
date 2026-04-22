@@ -17,19 +17,10 @@
 </template>
 
 <script setup>
-const { $prisma } = useNuxtApp()
 const route = useRoute()
-
 // Asume que el userId viene de params o auth; ajusta según tu lógica de autenticación
-const userId = route.params.id || 'some-user-id'  // Reemplaza con lógica real de auth
+const userId = route.params.id || 'some-user-id'
 
-let user = null
-try {
-  user = await $prisma.user.findUnique({
-    where: { id: userId },
-    include: { images: true }
-  })
-} catch (error) {
-  console.error('Error al cargar perfil:', error)
-}
+// Llama al servidor en lugar de usar Prisma directamente
+const { data: user } = await useFetch(`/api/users/${userId}`)
 </script>

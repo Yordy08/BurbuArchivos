@@ -17,7 +17,6 @@ type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {},
 export const AuthLoginForm: typeof import("../components/Auth/LoginForm.vue")['default']
 export const AuthRegisterForm: typeof import("../components/Auth/RegisterForm.vue")['default']
 export const Footer: typeof import("../components/Footer.vue")['default']
-export const ImageCard: typeof import("../components/ImageCard.vue")['default']
 export const Navbar: typeof import("../components/Navbar.vue")['default']
 export const UploadForm: typeof import("../components/UploadForm.vue")['default']
 export const NuxtWelcome: typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']
@@ -46,7 +45,6 @@ export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components
 export const LazyAuthLoginForm: LazyComponent<typeof import("../components/Auth/LoginForm.vue")['default']>
 export const LazyAuthRegisterForm: LazyComponent<typeof import("../components/Auth/RegisterForm.vue")['default']>
 export const LazyFooter: LazyComponent<typeof import("../components/Footer.vue")['default']>
-export const LazyImageCard: LazyComponent<typeof import("../components/ImageCard.vue")['default']>
 export const LazyNavbar: LazyComponent<typeof import("../components/Navbar.vue")['default']>
 export const LazyUploadForm: LazyComponent<typeof import("../components/UploadForm.vue")['default']>
 export const LazyNuxtWelcome: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']>

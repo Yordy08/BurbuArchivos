@@ -115,7 +115,8 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import { navigateTo } from '#app'
 import slugify from 'slugify'
 import Swal from 'sweetalert2'
 
@@ -134,6 +135,20 @@ watch(title,(val)=>{
     lower:true,
     strict:true
   })
+})
+
+onMounted(async () => {
+  try {
+    const res = await fetch('/api/auth/me')
+    if (res.ok) {
+      const data = await res.json()
+      user.value = data.user
+    } else {
+      throw new Error('Not authenticated')
+    }
+  } catch (err) {
+    await navigateTo('/login')
+  }
 })
 
 const seleccionarArchivos = (e)=>{

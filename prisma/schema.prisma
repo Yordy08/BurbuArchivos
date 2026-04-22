@@ -1,35 +1,44 @@
+// Prisma Schema - Corregido para SQLite + Nuxt
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./burbuarchivos.db"
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid())
   name      String
   email     String   @unique
   password  String
   role      String   @default("user")
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  images Image[]
+  images    Image[]
+
+  @@map("users")
 }
 
 model Image {
-  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  id           String   @id @default(uuid())
   title        String
-  slug         String  @unique
+  slug         String   @unique
   urlOriginal  String
-  urlWatermark String?
-  visibility   String  @default("public")
-  downloadable Boolean @default(false)
-  seoEnabled   Boolean @default(true)
+  visibility   String   @default("public")
+  downloadable Boolean  @default(false)
+  seoEnabled   Boolean  @default(false)
+  downloads    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  userId String @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
+  @@map("images")
+  @@index([slug])
+  @@index([userId])
 }

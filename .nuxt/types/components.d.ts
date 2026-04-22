@@ -17,7 +17,6 @@ interface _GlobalComponents {
   AuthLoginForm: typeof import("../../components/Auth/LoginForm.vue")['default']
   AuthRegisterForm: typeof import("../../components/Auth/RegisterForm.vue")['default']
   Footer: typeof import("../../components/Footer.vue")['default']
-  ImageCard: typeof import("../../components/ImageCard.vue")['default']
   Navbar: typeof import("../../components/Navbar.vue")['default']
   UploadForm: typeof import("../../components/UploadForm.vue")['default']
   NuxtWelcome: typeof import("../../node_modules/nuxt/dist/app/components/welcome.vue")['default']
@@ -46,7 +45,6 @@ interface _GlobalComponents {
   LazyAuthLoginForm: LazyComponent<typeof import("../../components/Auth/LoginForm.vue")['default']>
   LazyAuthRegisterForm: LazyComponent<typeof import("../../components/Auth/RegisterForm.vue")['default']>
   LazyFooter: LazyComponent<typeof import("../../components/Footer.vue")['default']>
-  LazyImageCard: LazyComponent<typeof import("../../components/ImageCard.vue")['default']>
   LazyNavbar: LazyComponent<typeof import("../../components/Navbar.vue")['default']>
   LazyUploadForm: LazyComponent<typeof import("../../components/UploadForm.vue")['default']>
   LazyNuxtWelcome: LazyComponent<typeof import("../../node_modules/nuxt/dist/app/components/welcome.vue")['default']>

@@ -65,6 +65,8 @@
 </template>
 
 <script setup lang="ts">
+import { navigateTo } from '#app'
+
 const email = ref('')
 const password = ref('')
 const error = ref('')
@@ -75,17 +77,28 @@ const login = async () => {
   error.value = ''
 
   try {
-    // Aquí iría la lógica de autenticación
-    console.log('Login attempt:', { email: email.value, password: password.value })
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value
+      })
+    })
 
-    // Simulación de login exitoso
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    const data = await res.json()
 
-    // Redirigir al dashboard o página principal
-    await navigateTo('/')
+    if (!res.ok) {
+      throw new Error(data.message || 'Error al iniciar sesión')
+    }
 
-  } catch (err) {
-    error.value = 'Error al iniciar sesión. Verifica tus credenciales.'
+    // Redirigir a subir después del login exitoso
+    await navigateTo('/subir')
+
+  } catch (err: any) {
+    error.value = err.message || 'Error al iniciar sesión. Verifica tus credenciales.'
   } finally {
     loading.value = false
   }

@@ -3,10 +3,11 @@ import { Server } from 'node:http';
 import { resolve, dirname, join } from 'node:path';
 import nodeCrypto from 'node:crypto';
 import { parentPort, threadId } from 'node:worker_threads';
-import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, createError, getQuery as getQuery$1, readBody, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getResponseStatus, getRouterParam, setCookie, deleteCookie, readMultipartFormData, getResponseStatusText } from 'file://C:/Users/Yordy/BurbuArchivos/node_modules/h3/dist/index.mjs';
+import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, createError, getCookie, getQuery as getQuery$1, readBody, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getResponseStatus, getRouterParam, setCookie, deleteCookie, readMultipartFormData, getResponseStatusText } from 'file://C:/Users/Yordy/BurbuArchivos/node_modules/h3/dist/index.mjs';
 import { escapeHtml } from 'file://C:/Users/Yordy/BurbuArchivos/node_modules/@vue/shared/dist/shared.cjs.js';
 import bcrypt from 'file://C:/Users/Yordy/BurbuArchivos/node_modules/bcryptjs/index.js';
-import { PrismaClient } from 'file://C:/Users/Yordy/BurbuArchivos/node_modules/@prisma/client/default.js';
+import { v2 } from 'file://C:/Users/Yordy/BurbuArchivos/node_modules/cloudinary/cloudinary.js';
+import slugify from 'file://C:/Users/Yordy/BurbuArchivos/node_modules/slugify/slugify.js';
 import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'file://C:/Users/Yordy/BurbuArchivos/node_modules/vue-bundle-renderer/dist/runtime.mjs';
 import { parseURL, withoutBase, joinURL, getQuery, withQuery, withTrailingSlash, decodePath, withLeadingSlash, withoutTrailingSlash, joinRelativeURL } from 'file://C:/Users/Yordy/BurbuArchivos/node_modules/ufo/dist/index.mjs';
 import { renderToString } from 'file://C:/Users/Yordy/BurbuArchivos/node_modules/vue/server-renderer/index.mjs';
@@ -37,6 +38,7 @@ import _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw from 'file://C:/Users/Yordy/B
 import { promises } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname as dirname$1, resolve as resolve$1 } from 'file://C:/Users/Yordy/BurbuArchivos/node_modules/pathe/dist/index.mjs';
+import { PrismaClient } from 'file://C:/Users/Yordy/BurbuArchivos/node_modules/@prisma/client/default.js';
 import { walkResolver } from 'file://C:/Users/Yordy/BurbuArchivos/node_modules/unhead/dist/utils.mjs';
 
 const serverAssets = [{"baseName":"server","dir":"C:/Users/Yordy/BurbuArchivos/server/assets"}];
@@ -650,16 +652,10 @@ const _inlineRuntimeConfig = {
       }
     }
   },
-  "public": {
-    "prisma": {
-      "log": [],
-      "errorFormat": "pretty"
-    }
-  },
+  "public": {},
   "CLOUDINARY_CLOUD_NAME": "dnf00mh7g",
   "CLOUDINARY_API_KEY": "584498369853867",
-  "CLOUDINARY_API_SECRET": "jq7-ItHWrlnzQ2mLdi-DpM5B45Q",
-  "databaseUrl": "mongodb+srv://yordisdurango_db_user:00Ht1QZGBRxJj2YJ@burbuarchivo.30vybjv.mongodb.net/burbuarchivos?retryWrites=true&w=majority&appName=BurbuArchivo"
+  "CLOUDINARY_API_SECRET": "jq7-ItHWrlnzQ2mLdi-DpM5B45Q"
 };
 const envOptions = {
   prefix: "NITRO_",
@@ -705,9 +701,9 @@ new Proxy(/* @__PURE__ */ Object.create(null), {
   }
 });
 
-const config = useRuntimeConfig();
+const config$1 = useRuntimeConfig();
 const _routeRulesMatcher = toRouteMatcher(
-  createRouter({ routes: config.nitro.routeRules })
+  createRouter({ routes: config$1.nitro.routeRules })
 );
 function createRouteRulesHandler(ctx) {
   return eventHandler((event) => {
@@ -2142,7 +2138,22 @@ _IiITc9FKNZnGYTVW6c8RZTbO5sWy5jFn0USxU7N5QY,
 _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw
 ];
 
-const assets = {};
+const assets = {
+  "/index.mjs": {
+    "type": "text/javascript; charset=utf-8",
+    "etag": "\"1ee18-zHubMx/FLNKg8t4bM1xyno1BUr4\"",
+    "mtime": "2026-04-22T22:13:36.684Z",
+    "size": 126488,
+    "path": "index.mjs"
+  },
+  "/index.mjs.map": {
+    "type": "application/json",
+    "etag": "\"77b55-RSgEX1HjYEJqo34RZieIk8CnMYA\"",
+    "mtime": "2026-04-22T22:13:36.684Z",
+    "size": 490325,
+    "path": "index.mjs.map"
+  }
+};
 
 function readAsset (id) {
   const serverDir = dirname$1(fileURLToPath(globalThis._importMeta_.url));
@@ -2231,7 +2242,43 @@ const _W2zzC0 = eventHandler((event) => {
   return readAsset(id);
 });
 
-const _LC84kH = defineEventHandler((event) => {
+var _a;
+const globalForPrisma = globalThis;
+const prisma = (_a = globalForPrisma.prisma) != null ? _a : new PrismaClient();
+{
+  globalForPrisma.prisma = prisma;
+}
+
+const _LC84kH = defineEventHandler(async (event) => {
+  const path = event.path || "";
+  const publicRoutes = [
+    "/",
+    "/login",
+    "/register",
+    "/api/login",
+    "/api/register"
+  ];
+  if (publicRoutes.includes(path) || path.startsWith("/_nuxt/") || path.startsWith("/favicon") || path.startsWith("/images/") || path.startsWith("/public/")) {
+    return;
+  }
+  const userId = getCookie(event, "auth_token");
+  if (!userId) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: "No autorizado - login requerido"
+    });
+  }
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true }
+  });
+  if (!user) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Sesi\xF3n inv\xE1lida"
+    });
+  }
+  event.context.userId = user.id;
 });
 
 const VueResolver = (_, value) => {
@@ -2605,12 +2652,20 @@ async function getIslandContext(event) {
 	};
 }
 
+const _lazy_BTCkkv = () => Promise.resolve().then(function () { return images_get$3; });
+const _lazy_D2b7hm = () => Promise.resolve().then(function () { return _id__put$3; });
+const _lazy_cX1Cg2 = () => Promise.resolve().then(function () { return stats_get$1; });
 const _lazy_aNaQvJ = () => Promise.resolve().then(function () { return login_post$1; });
 const _lazy_1BEOGc = () => Promise.resolve().then(function () { return logout_post$1; });
+const _lazy_rSGfe7 = () => Promise.resolve().then(function () { return me_get$1; });
 const _lazy_9UWqTL = () => Promise.resolve().then(function () { return register_post$1; });
+const _lazy_6_lsmb = () => Promise.resolve().then(function () { return images_get$1; });
 const _lazy_jFfyEs = () => Promise.resolve().then(function () { return _id__delete$1; });
 const _lazy_Ccr9FV = () => Promise.resolve().then(function () { return _id__get$3; });
 const _lazy_T1fRzs = () => Promise.resolve().then(function () { return _id__put$1; });
+const _lazy_IdAcOR = () => Promise.resolve().then(function () { return download_post$1; });
+const _lazy_NLbzSu = () => Promise.resolve().then(function () { return _slug__get$3; });
+const _lazy_61Wu5N = () => Promise.resolve().then(function () { return _slug__get$1; });
 const _lazy_nUbfOJ = () => Promise.resolve().then(function () { return _id__get$1; });
 const _lazy_TSMVQZ = () => Promise.resolve().then(function () { return upload_post$1; });
 const _lazy_NDVelV = () => Promise.resolve().then(function () { return test_get$1; });
@@ -2620,12 +2675,20 @@ const _lazy__MfTK5 = () => Promise.resolve().then(function () { return renderer;
 const handlers = [
   { route: '', handler: _W2zzC0, lazy: false, middleware: true, method: undefined },
   { route: '', handler: _LC84kH, lazy: false, middleware: true, method: undefined },
+  { route: '/api/admin/images', handler: _lazy_BTCkkv, lazy: true, middleware: false, method: "get" },
+  { route: '/api/admin/images/:id', handler: _lazy_D2b7hm, lazy: true, middleware: false, method: "put" },
+  { route: '/api/admin/stats', handler: _lazy_cX1Cg2, lazy: true, middleware: false, method: "get" },
   { route: '/api/auth/login', handler: _lazy_aNaQvJ, lazy: true, middleware: false, method: "post" },
   { route: '/api/auth/logout', handler: _lazy_1BEOGc, lazy: true, middleware: false, method: "post" },
+  { route: '/api/auth/me', handler: _lazy_rSGfe7, lazy: true, middleware: false, method: "get" },
   { route: '/api/auth/register', handler: _lazy_9UWqTL, lazy: true, middleware: false, method: "post" },
+  { route: '/api/images', handler: _lazy_6_lsmb, lazy: true, middleware: false, method: "get" },
   { route: '/api/images/:id', handler: _lazy_jFfyEs, lazy: true, middleware: false, method: "delete" },
   { route: '/api/images/:id', handler: _lazy_Ccr9FV, lazy: true, middleware: false, method: "get" },
   { route: '/api/images/:id', handler: _lazy_T1fRzs, lazy: true, middleware: false, method: "put" },
+  { route: '/api/images/:id/download', handler: _lazy_IdAcOR, lazy: true, middleware: false, method: "post" },
+  { route: '/api/images/:slug', handler: _lazy_NLbzSu, lazy: true, middleware: false, method: "get" },
+  { route: '/api/images/by-slug/:slug', handler: _lazy_61Wu5N, lazy: true, middleware: false, method: "get" },
   { route: '/api/images/private-download/:id', handler: _lazy_nUbfOJ, lazy: true, middleware: false, method: "get" },
   { route: '/api/images/upload', handler: _lazy_TSMVQZ, lazy: true, middleware: false, method: "post" },
   { route: '/api/test', handler: _lazy_NDVelV, lazy: true, middleware: false, method: "get" },
@@ -2972,12 +3035,115 @@ const styles$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   default: styles
 }, Symbol.toStringTag, { value: 'Module' }));
 
-var _a;
-const globalForPrisma = globalThis;
-const prisma = (_a = globalForPrisma.prisma) != null ? _a : new PrismaClient();
-{
-  globalForPrisma.prisma = prisma;
-}
+const images_get$2 = defineEventHandler(async (event) => {
+  try {
+    const userId = getCookie(event, "auth_token");
+    if (!userId) {
+      throw createError({ statusCode: 401, statusMessage: "No autorizado" });
+    }
+    const images = await prisma.image.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" }
+    });
+    return images;
+  } catch (err) {
+    console.error("Get user images error:", err);
+    throw createError({
+      statusCode: 500,
+      statusMessage: err instanceof Error ? err.message : "Error obteniendo im\xE1genes"
+    });
+  }
+});
+
+const images_get$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: images_get$2
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _id__put$2 = defineEventHandler(async (event) => {
+  var _a;
+  try {
+    const userId = getCookie(event, "auth_token");
+    if (!userId) {
+      throw createError({ statusCode: 401, statusMessage: "No autorizado" });
+    }
+    const imageId = (_a = event.context.params) == null ? void 0 : _a.id;
+    if (!imageId) {
+      throw createError({ statusCode: 400, statusMessage: "ID de imagen no proporcionado" });
+    }
+    const body = await readBody(event);
+    const { title, visibility, downloadable, seoEnabled } = body || {};
+    const image = await prisma.image.findUnique({
+      where: { id: imageId }
+    });
+    if (!image || image.userId !== userId) {
+      throw createError({ statusCode: 403, statusMessage: "No tienes permiso para editar esta imagen" });
+    }
+    const updatedImage = await prisma.image.update({
+      where: { id: imageId },
+      data: {
+        title,
+        visibility,
+        downloadable,
+        seoEnabled
+      }
+    });
+    return updatedImage;
+  } catch (err) {
+    console.error("Update image error:", err);
+    throw createError({
+      statusCode: 500,
+      statusMessage: err instanceof Error ? err.message : "Error actualizando imagen"
+    });
+  }
+});
+
+const _id__put$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _id__put$2
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const stats_get = defineEventHandler(async (event) => {
+  try {
+    const userId = getCookie(event, "auth_token");
+    if (!userId) {
+      throw createError({ statusCode: 401, statusMessage: "No autorizado" });
+    }
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+    if (!user) {
+      throw createError({ statusCode: 401, statusMessage: "Usuario no encontrado" });
+    }
+    const images = await prisma.image.findMany({
+      where: { userId },
+      select: { downloads: true }
+    });
+    const totalDownloads = images.reduce((sum, img) => sum + img.downloads, 0);
+    const totalUsers = await prisma.user.count();
+    return {
+      totalImages: images.length,
+      totalDownloads,
+      totalUsers,
+      lastLogin: user.lastLogin,
+      user: {
+        name: user.name,
+        email: user.email
+      }
+    };
+  } catch (err) {
+    console.error("Admin stats error:", err);
+    throw createError({
+      statusCode: 500,
+      statusMessage: err instanceof Error ? err.message : "Error obteniendo estad\xEDsticas"
+    });
+  }
+});
+
+const stats_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: stats_get
+}, Symbol.toStringTag, { value: 'Module' }));
 
 const login_post = defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -2992,6 +3158,10 @@ const login_post = defineEventHandler(async (event) => {
       statusMessage: "Credenciales inv\xE1lidas"
     });
   }
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { lastLogin: /* @__PURE__ */ new Date() }
+  });
   setCookie(event, "auth_token", String(user.id), {
     httpOnly: true,
     secure: false
@@ -3022,6 +3192,31 @@ const logout_post = defineEventHandler(async (event) => {
 const logout_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
   default: logout_post
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const me_get = defineEventHandler(async (event) => {
+  const userId = getCookie(event, "auth_token");
+  if (!userId) {
+    throw createError({ statusCode: 401, statusMessage: "No autorizado" });
+  }
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true
+    }
+  });
+  if (!user) {
+    throw createError({ statusCode: 401, statusMessage: "Usuario no encontrado" });
+  }
+  return { user };
+});
+
+const me_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: me_get
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const register_post = defineEventHandler(async (event) => {
@@ -3068,9 +3263,37 @@ const register_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.definePro
   default: register_post
 }, Symbol.toStringTag, { value: 'Module' }));
 
+const images_get = defineEventHandler(async (event) => {
+  const images = await prisma.image.findMany({
+    where: {
+      visibility: "public"
+    },
+    include: {
+      user: {
+        select: {
+          name: true,
+          email: true
+        }
+      }
+    },
+    orderBy: {
+      createdAt: "desc"
+    }
+  });
+  return images;
+});
+
+const images_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: images_get
+}, Symbol.toStringTag, { value: 'Module' }));
+
 const _id__delete = defineEventHandler(async (event) => {
   var _a;
   const id = (_a = event.context.params) == null ? void 0 : _a.id;
+  if (!id) {
+    throw createError({ statusCode: 400, statusMessage: "ID no v\xE1lido" });
+  }
   try {
     await prisma.image.delete({
       where: { id }
@@ -3145,6 +3368,96 @@ const _id__put$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty
   default: _id__put
 }, Symbol.toStringTag, { value: 'Module' }));
 
+const download_post = defineEventHandler(async (event) => {
+  try {
+    const imageId = event.context.params.id;
+    const image = await prisma.image.update({
+      where: { id: imageId },
+      data: {
+        downloads: {
+          increment: 1
+        }
+      }
+    });
+    return { ok: true, downloads: image.downloads };
+  } catch (err) {
+    console.error("Error incrementing downloads:", err);
+    throw createError({
+      statusCode: 500,
+      statusMessage: err instanceof Error ? err.message : "Error registrando descarga"
+    });
+  }
+});
+
+const download_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: download_post
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _slug__get$2 = defineEventHandler(async (event) => {
+  try {
+    const slug = event.context.params.slug;
+    const image = await prisma.image.findUnique({
+      where: { slug },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true
+          }
+        }
+      }
+    });
+    if (!image) {
+      throw createError({ statusCode: 404, statusMessage: "Imagen no encontrada" });
+    }
+    return image;
+  } catch (err) {
+    console.error("Error fetching image:", err);
+    throw createError({
+      statusCode: 500,
+      statusMessage: err instanceof Error ? err.message : "Error obteniendo imagen"
+    });
+  }
+});
+
+const _slug__get$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _slug__get$2
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _slug__get = defineEventHandler(async (event) => {
+  try {
+    const slug = event.context.params.slug;
+    const image = await prisma.image.findUnique({
+      where: { slug },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true
+          }
+        }
+      }
+    });
+    if (!image) {
+      throw createError({ statusCode: 404, statusMessage: "Imagen no encontrada" });
+    }
+    return image;
+  } catch (err) {
+    console.error("Error fetching image:", err);
+    throw createError({
+      statusCode: 500,
+      statusMessage: err instanceof Error ? err.message : "Error obteniendo imagen"
+    });
+  }
+});
+
+const _slug__get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _slug__get
+}, Symbol.toStringTag, { value: 'Module' }));
+
 const _id__get = defineEventHandler(async (event) => {
   var _a;
   const id = (_a = event.context.params) == null ? void 0 : _a.id;
@@ -3168,9 +3481,25 @@ const _id__get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty
   default: _id__get
 }, Symbol.toStringTag, { value: 'Module' }));
 
+const config = useRuntimeConfig();
+v2.config({
+  cloud_name: config.CLOUDINARY_CLOUD_NAME,
+  api_key: config.CLOUDINARY_API_KEY,
+  api_secret: config.CLOUDINARY_API_SECRET
+});
 const upload_post = defineEventHandler(async (event) => {
   var _a, _b, _c, _d, _e, _f, _g, _h;
   try {
+    const userId = getCookie(event, "auth_token");
+    if (!userId) {
+      throw createError({ statusCode: 401, statusMessage: "No autorizado" });
+    }
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+    if (!user) {
+      throw createError({ statusCode: 401, statusMessage: "Usuario no encontrado" });
+    }
     const form = await readMultipartFormData(event);
     if (!form) {
       throw createError({ statusCode: 400, statusMessage: "No data" });
@@ -3185,14 +3514,31 @@ const upload_post = defineEventHandler(async (event) => {
     }
     const images = await Promise.all(
       files.map(async (file, index) => {
-        const filename = file.filename || `image_${Date.now()}_${index}.jpg`;
+        const uploadResult = await new Promise((resolve, reject) => {
+          v2.uploader.upload_stream(
+            {
+              folder: "burbuarchivos",
+              public_id: `image_${Date.now()}_${index}`,
+              resource_type: "image"
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          ).end(file.data);
+        });
+        const baseSlug = slugify(title || "image", { lower: true, strict: true });
+        const timestamp = Date.now();
+        const slug = `${baseSlug}-${timestamp}-${index}`;
         return prisma.image.create({
           data: {
             title,
-            url: `/uploads/${filename}`,
+            slug,
+            urlOriginal: uploadResult.secure_url,
             visibility,
             downloadable,
-            seoEnabled
+            seoEnabled,
+            userId: user.id
           }
         });
       })
@@ -3203,7 +3549,6 @@ const upload_post = defineEventHandler(async (event) => {
       images
     };
   } catch (err) {
-    console.error("\u{1F525} UPLOAD ERROR REAL:", err);
     throw createError({
       statusCode: 500,
       statusMessage: err instanceof Error ? err.message : "Error subiendo im\xE1genes"

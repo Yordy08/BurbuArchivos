@@ -1,8 +1,31 @@
 import { prisma } from '~/server/utils/prisma'
-import { readMultipartFormData } from 'h3'
+import { readMultipartFormData, getCookie } from 'h3'
+import { v2 as cloudinary } from 'cloudinary'
+import slugify from 'slugify'
+
+const config = useRuntimeConfig()
+
+cloudinary.config({
+  cloud_name: config.CLOUDINARY_CLOUD_NAME,
+  api_key: config.CLOUDINARY_API_KEY,
+  api_secret: config.CLOUDINARY_API_SECRET
+})
 
 export default defineEventHandler(async (event) => {
   try {
+    // Check auth
+    const userId = getCookie(event, 'auth_token')
+    if (!userId) {
+      throw createError({ statusCode: 401, statusMessage: 'No autorizado' })
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    })
+
+    if (!user) {
+      throw createError({ statusCode: 401, statusMessage: 'Usuario no encontrado' })
+    }
 
     const form = await readMultipartFormData(event)
 
@@ -25,18 +48,35 @@ export default defineEventHandler(async (event) => {
     const images = await Promise.all(
       files.map(async (file, index) => {
 
-        // 🔥 FIX IMPORTANTE: filename puede no existir
-        const filename =
-          file.filename ||
-          `image_${Date.now()}_${index}.jpg`
+        // Upload to Cloudinary
+        const uploadResult = await new Promise((resolve, reject) => {
+          cloudinary.uploader.upload_stream(
+            {
+              folder: 'burbuarchivos',
+              public_id: `image_${Date.now()}_${index}`,
+              resource_type: 'image'
+            },
+            (error, result) => {
+              if (error) reject(error)
+              else resolve(result)
+            }
+          ).end(file.data)
+        })
+
+        // Generate unique slug
+        const baseSlug = slugify(title || 'image', { lower: true, strict: true })
+        const timestamp = Date.now()
+        const slug = `${baseSlug}-${timestamp}-${index}`
 
         return prisma.image.create({
           data: {
             title,
-            url: `/uploads/${filename}`,
+            slug,
+            urlOriginal: uploadResult.secure_url,
             visibility,
             downloadable,
-            seoEnabled
+            seoEnabled,
+            userId: user.id
           }
         })
       })
@@ -49,8 +89,6 @@ export default defineEventHandler(async (event) => {
     }
 
   } catch (err) {
-    console.error('🔥 UPLOAD ERROR REAL:', err)
-
     throw createError({
       statusCode: 500,
       statusMessage: err instanceof Error ? err.message : 'Error subiendo imágenes'

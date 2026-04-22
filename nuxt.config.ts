@@ -11,22 +11,27 @@ export default defineNuxtConfig({
     'bootstrap/dist/css/bootstrap.min.css'
   ],
 
-  modules: ['@prisma/nuxt'],  // Agregado para integrar Prisma
+  modules: [], 
+
+  experimental: {
+    payloadExtraction: false
+  },
 
   runtimeConfig: {
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
-    databaseUrl: process.env.DATABASE_URL,  // Agregado para Prisma
-
-    public: {}
   },
 
   vite: {
     server: {
-      hmr: {
-        overlay: false  // Desactiva overlay para reducir IPC issues
+      hmr: true,
+      watch: {
+        ignored: ['**/node_modules/**', '**/.nuxt/**']
       }
+    },
+    optimizeDeps: {
+      force: true
     }
   }
 })

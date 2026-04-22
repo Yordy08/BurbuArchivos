@@ -3,19 +3,43 @@ import type { Serialize, Simplify } from "nitropack/types";
 declare module "nitropack/types" {
   type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
   interface InternalApi {
+    '/api/admin/images': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/images.get').default>>>>
+    }
+    '/api/admin/images/:id': {
+      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/images/[id].put').default>>>>
+    }
+    '/api/admin/stats': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/stats.get').default>>>>
+    }
     '/api/auth/login': {
       'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/login.post').default>>>>
     }
     '/api/auth/logout': {
       'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/logout.post').default>>>>
     }
+    '/api/auth/me': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/me.get').default>>>>
+    }
     '/api/auth/register': {
       'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/register.post').default>>>>
+    }
+    '/api/images': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images.get').default>>>>
     }
     '/api/images/:id': {
       'delete': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/[id].delete').default>>>>
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/[id].get').default>>>>
       'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/[id].put').default>>>>
+    }
+    '/api/images/:id/download': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/[id]/download.post').default>>>>
+    }
+    '/api/images/:slug': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/[slug].get').default>>>>
+    }
+    '/api/images/by-slug/:slug': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/by-slug/[slug].get').default>>>>
     }
     '/api/images/private-download/:id': {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/private-download/[id].get').default>>>>
