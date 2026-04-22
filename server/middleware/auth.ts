@@ -4,22 +4,25 @@ import { prisma } from '../utils/prisma'
 export default defineEventHandler(async (event) => {
   const path = event.path || ''
 
-  // ✅ Rutas públicas
-  const publicRoutes = [
+  // ✅ TODAS las rutas públicas
+  const publicPaths = [
     '/',
     '/login',
     '/register',
-    '/api/login',
-    '/api/register'
+    '/acerca',
+    '/privacidad',
+    '/terminos'
   ]
 
-  // ✅ Permitir páginas públicas y archivos internos de Nuxt
+  // ✅ Permitir frontend y APIs públicas
   if (
-    publicRoutes.includes(path) ||
+    publicPaths.includes(path) ||
     path.startsWith('/_nuxt/') ||
     path.startsWith('/favicon') ||
-    path.startsWith('/images/') ||
-    path.startsWith('/public/')
+    path.startsWith('/api/auth/login') ||
+    path.startsWith('/api/auth/register') ||
+    path.startsWith('/api/images') ||
+    path.startsWith('/foto/')
   ) {
     return
   }
@@ -45,6 +48,5 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // ✅ Guardar usuario en contexto
   event.context.userId = user.id
 })

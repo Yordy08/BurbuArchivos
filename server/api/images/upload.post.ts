@@ -1,5 +1,11 @@
 import { prisma } from '~/server/utils/prisma'
-import { readMultipartFormData, getCookie } from 'h3'
+import {
+  readMultipartFormData,
+  getCookie,
+  createError,
+  defineEventHandler
+} from 'h3'
+
 import { v2 as cloudinary } from 'cloudinary'
 import slugify from 'slugify'
 
@@ -13,10 +19,13 @@ cloudinary.config({
 
 export default defineEventHandler(async (event) => {
   try {
-    // Check auth
     const userId = getCookie(event, 'auth_token')
+
     if (!userId) {
-      throw createError({ statusCode: 401, statusMessage: 'No autorizado' })
+      throw createError({
+        statusCode: 401,
+        statusMessage: 'No autorizado'
+      })
     }
 
     const user = await prisma.user.findUnique({
@@ -24,32 +33,45 @@ export default defineEventHandler(async (event) => {
     })
 
     if (!user) {
-      throw createError({ statusCode: 401, statusMessage: 'Usuario no encontrado' })
+      throw createError({
+        statusCode: 401,
+        statusMessage: 'Usuario no encontrado'
+      })
     }
 
     const form = await readMultipartFormData(event)
 
     if (!form) {
-      throw createError({ statusCode: 400, statusMessage: 'No data' })
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Formulario vacío'
+      })
     }
 
-    const title = form.find(f => f.name === 'title')?.data?.toString() || ''
-    const visibility = form.find(f => f.name === 'visibility')?.data?.toString() || 'public'
+    const title =
+      form.find(f => f.name === 'title')?.data?.toString() || ''
 
-    const downloadable = form.find(f => f.name === 'downloadable')?.data?.toString() === 'true'
-    const seoEnabled = form.find(f => f.name === 'seoEnabled')?.data?.toString() === 'true'
+    const visibility =
+      form.find(f => f.name === 'visibility')?.data?.toString() || 'public'
+
+    const downloadable =
+      form.find(f => f.name === 'downloadable')?.data?.toString() === 'true'
+
+    const seoEnabled =
+      form.find(f => f.name === 'seoEnabled')?.data?.toString() === 'true'
 
     const files = form.filter(f => f.name === 'images')
 
     if (!files.length) {
-      throw createError({ statusCode: 400, statusMessage: 'No images' })
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'No seleccionaste imágenes'
+      })
     }
 
     const images = await Promise.all(
       files.map(async (file, index) => {
-
-        // Upload to Cloudinary
-        const uploadResult = await new Promise((resolve, reject) => {
+        const uploadResult: any = await new Promise((resolve, reject) => {
           cloudinary.uploader.upload_stream(
             {
               folder: 'burbuarchivos',
@@ -63,10 +85,12 @@ export default defineEventHandler(async (event) => {
           ).end(file.data)
         })
 
-        // Generate unique slug
-        const baseSlug = slugify(title || 'image', { lower: true, strict: true })
-        const timestamp = Date.now()
-        const slug = `${baseSlug}-${timestamp}-${index}`
+        const baseSlug = slugify(title || 'imagen', {
+          lower: true,
+          strict: true
+        })
+
+        const slug = `${baseSlug}-${Date.now()}-${index}`
 
         return prisma.image.create({
           data: {
@@ -88,10 +112,10 @@ export default defineEventHandler(async (event) => {
       images
     }
 
-  } catch (err) {
+  } catch (err: any) {
     throw createError({
-      statusCode: 500,
-      statusMessage: err instanceof Error ? err.message : 'Error subiendo imágenes'
+      statusCode: err.statusCode || 500,
+      statusMessage: err.statusMessage || err.message || 'Error al subir imágenes'
     })
   }
 })

@@ -6,22 +6,30 @@
       <h1 class="fw-bold text-danger display-4">
         🖼️ Galería de Imágenes
       </h1>
-      <p class="text-muted">Explora, descarga y visualiza imágenes</p>
+      <p class="text-muted">
+        Explora, descarga y visualiza imágenes
+      </p>
     </div>
 
     <!-- LOADING -->
     <div v-if="loading" class="text-center py-5">
-      <div class="spinner-border text-danger" style="width:4rem;height:4rem;">
+      <div
+        class="spinner-border text-danger"
+        style="width:4rem;height:4rem;"
+      >
         <span class="visually-hidden">Cargando...</span>
       </div>
     </div>
 
-    <!-- SIN IMAGENES -->
-    <div v-else-if="images.length === 0" class="alert alert-warning text-center">
+    <!-- SIN IMÁGENES -->
+    <div
+      v-else-if="images.length === 0"
+      class="alert alert-warning text-center"
+    >
       No hay imágenes disponibles.
     </div>
 
-    <!-- GALERIA -->
+    <!-- GALERÍA -->
     <div v-else class="row g-4">
 
       <div
@@ -31,7 +39,7 @@
       >
         <div class="card h-100 shadow border-0">
 
-          <!-- IMAGEN -->
+          <!-- FOTO -->
           <img
             :src="image.urlOriginal"
             :alt="image.title"
@@ -39,7 +47,7 @@
             style="height:220px; object-fit:cover;"
           />
 
-          <!-- BODY -->
+          <!-- CONTENIDO -->
           <div class="card-body d-flex flex-column">
 
             <h5 class="card-title text-danger fw-bold">
@@ -47,11 +55,11 @@
             </h5>
 
             <p class="small text-muted mb-1">
-              👤 {{ image.user.name }}
+              👤 {{ image.user?.name || 'Usuario' }}
             </p>
 
             <p class="small text-muted">
-              📅 {{ new Date(image.createdAt).toLocaleDateString() }}
+              📅 {{ formatDate(image.createdAt) }}
             </p>
 
             <!-- BOTONES -->
@@ -65,6 +73,15 @@
                 ⬇ Descargar
               </button>
 
+              <button
+                v-else
+                class="btn btn-secondary rounded-pill"
+                disabled
+              >
+                ❌ Descarga bloqueada
+              </button>
+
+              <!-- VER IMAGEN POR SLUG -->
               <NuxtLink
                 :to="`/foto/${image.slug}`"
                 class="btn btn-outline-dark rounded-pill"
@@ -93,20 +110,38 @@ const loading = ref(true)
 onMounted(async () => {
   try {
     const res = await fetch('/api/images')
-    if (res.ok) {
-      images.value = await res.json()
+
+    if (!res.ok) {
+      const errorText = await res.text()
+      console.error('ERROR API:', res.status, errorText)
+      return
     }
+
+    const data = await res.json()
+
+    console.log('IMAGENES:', data)
+
+    images.value = data
+
   } catch (error) {
-    console.error(error)
+    console.error('FETCH ERROR:', error)
   } finally {
     loading.value = false
   }
 })
 
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString()
+}
+
 const downloadImage = (image) => {
-  const link = document.createElement('a')
-  link.href = image.urlOriginal
-  link.download = `${image.slug}.jpg`
-  link.click()
+  try {
+    const link = document.createElement('a')
+    link.href = image.urlOriginal
+    link.download = `${image.slug}.jpg`
+    link.click()
+  } catch (error) {
+    console.error('Error descargando:', error)
+  }
 }
 </script>

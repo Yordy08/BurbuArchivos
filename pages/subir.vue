@@ -113,12 +113,13 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import { navigateTo } from '#app'
 import slugify from 'slugify'
 import Swal from 'sweetalert2'
+
+const user = ref(null)
 
 const title = ref('')
 const slug = ref('')
@@ -130,41 +131,40 @@ const files = ref([])
 const preview = ref([])
 const subiendo = ref(false)
 
-watch(title,(val)=>{
-  slug.value = slugify(val,{
-    lower:true,
-    strict:true
+watch(title, (val) => {
+  slug.value = slugify(val, {
+    lower: true,
+    strict: true
   })
 })
 
 onMounted(async () => {
   try {
     const res = await fetch('/api/auth/me')
-    if (res.ok) {
-      const data = await res.json()
-      user.value = data.user
-    } else {
-      throw new Error('Not authenticated')
-    }
+
+    if (!res.ok) throw new Error()
+
+    const data = await res.json()
+    user.value = data.user
+
   } catch (err) {
-    await navigateTo('/login')
+    return navigateTo('/login')
   }
 })
 
-const seleccionarArchivos = (e)=>{
+const seleccionarArchivos = (e) => {
   files.value = Array.from(e.target.files)
 
-  preview.value = files.value.map(file=>{
-    return URL.createObjectURL(file)
-  })
+  preview.value = files.value.map(file =>
+    URL.createObjectURL(file)
+  )
 }
 
-const subirImagenes = async ()=>{
-
-  if(!files.value.length){
+const subirImagenes = async () => {
+  if (!files.value.length) {
     return Swal.fire({
-      icon:'warning',
-      title:'Selecciona imágenes'
+      icon: 'warning',
+      title: 'Selecciona imágenes'
     })
   }
 
@@ -172,34 +172,34 @@ const subirImagenes = async ()=>{
 
   const formData = new FormData()
 
-  files.value.forEach(file=>{
-    formData.append('images',file)
+  files.value.forEach(file => {
+    formData.append('images', file)
   })
 
-  formData.append('title',title.value)
-  formData.append('visibility',visibility.value)
-  formData.append('downloadable',downloadable.value)
-  formData.append('seoEnabled',seoEnabled.value)
+  formData.append('title', title.value)
+  formData.append('slug', slug.value)
+  formData.append('visibility', visibility.value)
+  formData.append('downloadable', downloadable.value.toString())
+  formData.append('seoEnabled', seoEnabled.value.toString())
 
-  try{
-
-    const res = await fetch('/api/images/upload',{
-      method:'POST',
-      body:formData
+  try {
+    const res = await fetch('/api/images/upload', {
+      method: 'POST',
+      body: formData
     })
 
     const data = await res.json()
 
-    if(!res.ok){
-      throw new Error(data.statusMessage)
+    if (!res.ok) {
+      throw new Error(data.statusMessage || 'Error al subir')
     }
 
     Swal.fire({
-      icon:'success',
-      title:'Imágenes guardadas',
-      text:`${data.total} imagen(es) subida(s)`,
-      timer:2000,
-      showConfirmButton:false
+      icon: 'success',
+      title: 'Imágenes guardadas',
+      text: `${data.total} imagen(es) subida(s)`,
+      timer: 2000,
+      showConfirmButton: false
     })
 
     title.value = ''
@@ -207,17 +207,14 @@ const subirImagenes = async ()=>{
     files.value = []
     preview.value = []
 
-  }catch(err){
-
+  } catch (err) {
     Swal.fire({
-      icon:'error',
-      title:'Error',
-      text:err.message
+      icon: 'error',
+      title: 'Error',
+      text: err.message
     })
-
-  }finally{
+  } finally {
     subiendo.value = false
   }
-
 }
 </script>

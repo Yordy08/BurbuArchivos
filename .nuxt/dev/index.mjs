@@ -2138,22 +2138,7 @@ _IiITc9FKNZnGYTVW6c8RZTbO5sWy5jFn0USxU7N5QY,
 _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw
 ];
 
-const assets = {
-  "/index.mjs": {
-    "type": "text/javascript; charset=utf-8",
-    "etag": "\"1ee18-zHubMx/FLNKg8t4bM1xyno1BUr4\"",
-    "mtime": "2026-04-22T22:13:36.684Z",
-    "size": 126488,
-    "path": "index.mjs"
-  },
-  "/index.mjs.map": {
-    "type": "application/json",
-    "etag": "\"77b55-RSgEX1HjYEJqo34RZieIk8CnMYA\"",
-    "mtime": "2026-04-22T22:13:36.684Z",
-    "size": 490325,
-    "path": "index.mjs.map"
-  }
-};
+const assets = {};
 
 function readAsset (id) {
   const serverDir = dirname$1(fileURLToPath(globalThis._importMeta_.url));
@@ -2251,14 +2236,15 @@ const prisma = (_a = globalForPrisma.prisma) != null ? _a : new PrismaClient();
 
 const _LC84kH = defineEventHandler(async (event) => {
   const path = event.path || "";
-  const publicRoutes = [
+  const publicPaths = [
     "/",
     "/login",
     "/register",
-    "/api/login",
-    "/api/register"
+    "/acerca",
+    "/privacidad",
+    "/terminos"
   ];
-  if (publicRoutes.includes(path) || path.startsWith("/_nuxt/") || path.startsWith("/favicon") || path.startsWith("/images/") || path.startsWith("/public/")) {
+  if (publicPaths.includes(path) || path.startsWith("/_nuxt/") || path.startsWith("/favicon") || path.startsWith("/api/auth/login") || path.startsWith("/api/auth/register") || path.startsWith("/api/images") || path.startsWith("/foto/")) {
     return;
   }
   const userId = getCookie(event, "auth_token");
@@ -3427,30 +3413,25 @@ const _slug__get$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProper
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const _slug__get = defineEventHandler(async (event) => {
-  try {
-    const slug = event.context.params.slug;
-    const image = await prisma.image.findUnique({
-      where: { slug },
-      include: {
-        user: {
-          select: {
-            name: true,
-            email: true
-          }
+  var _a;
+  const slug = (_a = event.context.params) == null ? void 0 : _a.slug;
+  const image = await prisma.image.findUnique({
+    where: { slug },
+    include: {
+      user: {
+        select: {
+          name: true
         }
       }
-    });
-    if (!image) {
-      throw createError({ statusCode: 404, statusMessage: "Imagen no encontrada" });
     }
-    return image;
-  } catch (err) {
-    console.error("Error fetching image:", err);
+  });
+  if (!image) {
     throw createError({
-      statusCode: 500,
-      statusMessage: err instanceof Error ? err.message : "Error obteniendo imagen"
+      statusCode: 404,
+      statusMessage: "Imagen no encontrada"
     });
   }
+  return image;
 });
 
 const _slug__get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
@@ -3492,17 +3473,26 @@ const upload_post = defineEventHandler(async (event) => {
   try {
     const userId = getCookie(event, "auth_token");
     if (!userId) {
-      throw createError({ statusCode: 401, statusMessage: "No autorizado" });
+      throw createError({
+        statusCode: 401,
+        statusMessage: "No autorizado"
+      });
     }
     const user = await prisma.user.findUnique({
       where: { id: userId }
     });
     if (!user) {
-      throw createError({ statusCode: 401, statusMessage: "Usuario no encontrado" });
+      throw createError({
+        statusCode: 401,
+        statusMessage: "Usuario no encontrado"
+      });
     }
     const form = await readMultipartFormData(event);
     if (!form) {
-      throw createError({ statusCode: 400, statusMessage: "No data" });
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Formulario vac\xEDo"
+      });
     }
     const title = ((_b = (_a = form.find((f) => f.name === "title")) == null ? void 0 : _a.data) == null ? void 0 : _b.toString()) || "";
     const visibility = ((_d = (_c = form.find((f) => f.name === "visibility")) == null ? void 0 : _c.data) == null ? void 0 : _d.toString()) || "public";
@@ -3510,7 +3500,10 @@ const upload_post = defineEventHandler(async (event) => {
     const seoEnabled = ((_h = (_g = form.find((f) => f.name === "seoEnabled")) == null ? void 0 : _g.data) == null ? void 0 : _h.toString()) === "true";
     const files = form.filter((f) => f.name === "images");
     if (!files.length) {
-      throw createError({ statusCode: 400, statusMessage: "No images" });
+      throw createError({
+        statusCode: 400,
+        statusMessage: "No seleccionaste im\xE1genes"
+      });
     }
     const images = await Promise.all(
       files.map(async (file, index) => {
@@ -3527,9 +3520,11 @@ const upload_post = defineEventHandler(async (event) => {
             }
           ).end(file.data);
         });
-        const baseSlug = slugify(title || "image", { lower: true, strict: true });
-        const timestamp = Date.now();
-        const slug = `${baseSlug}-${timestamp}-${index}`;
+        const baseSlug = slugify(title || "imagen", {
+          lower: true,
+          strict: true
+        });
+        const slug = `${baseSlug}-${Date.now()}-${index}`;
         return prisma.image.create({
           data: {
             title,
@@ -3550,8 +3545,8 @@ const upload_post = defineEventHandler(async (event) => {
     };
   } catch (err) {
     throw createError({
-      statusCode: 500,
-      statusMessage: err instanceof Error ? err.message : "Error subiendo im\xE1genes"
+      statusCode: err.statusCode || 500,
+      statusMessage: err.statusMessage || err.message || "Error al subir im\xE1genes"
     });
   }
 });

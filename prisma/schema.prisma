@@ -1,4 +1,4 @@
-// Prisma Schema - Corregido para SQLite + Nuxt
+// Prisma Schema - SQLite + Nuxt (CORREGIDO)
 
 generator client {
   provider = "prisma-client-js"
@@ -15,8 +15,10 @@ model User {
   email     String   @unique
   password  String
   role      String   @default("user")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  lastLogin DateTime?
 
   images    Image[]
 
@@ -32,6 +34,7 @@ model Image {
   downloadable Boolean  @default(false)
   seoEnabled   Boolean  @default(false)
   downloads    Int      @default(0)
+
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
