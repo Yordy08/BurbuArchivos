@@ -225,24 +225,48 @@ onMounted(async () => {
   await loadImages()
 })
 
+/* SOLO DATOS DEL USUARIO LOGUEADO */
 const loadStats = async () => {
   try {
-    const res = await fetch('/api/admin/stats')
-    if (res.ok) {
-      stats.value = await res.json()
+    const res = await fetch('/api/auth/me')
+
+    if (!res.ok) return
+
+    const user = await res.json()
+
+    const userImages = user.images || []
+
+    stats.value = {
+      totalImages: userImages.length,
+
+      totalDownloads: userImages.reduce(
+        (acc, img) => acc + (img.downloads || 0),
+        0
+      ),
+
+      totalUsers: 1,
+
+      lastLogin: user.lastLogin || null
     }
+
   } catch (err) {
     console.error('Error loading stats:', err)
   }
 }
 
+/* SOLO IMÁGENES DEL USUARIO */
 const loadImages = async () => {
   try {
     loading.value = true
-    const res = await fetch('/api/admin/images')
-    if (res.ok) {
-      images.value = await res.json()
-    }
+
+    const res = await fetch('/api/auth/me')
+
+    if (!res.ok) return
+
+    const user = await res.json()
+
+    images.value = user.images || []
+
   } catch (err) {
     console.error('Error loading images:', err)
   } finally {
@@ -262,7 +286,8 @@ const closeModal = () => {
 const saveChanges = async () => {
   try {
     saving.value = true
-    const res = await fetch(`/api/admin/images/${editingImage.value.id}`, {
+
+    const res = await fetch(`/api/images/${editingImage.value.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -275,18 +300,21 @@ const saveChanges = async () => {
       })
     })
 
-    if (res.ok) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Imagen actualizada',
-        timer: 1500,
-        showConfirmButton: false
-      })
-      closeModal()
-      await loadImages()
-    } else {
+    if (!res.ok) {
       throw new Error('Error al actualizar')
     }
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Imagen actualizada',
+      timer: 1500,
+      showConfirmButton: false
+    })
+
+    closeModal()
+    await loadImages()
+    await loadStats()
+
   } catch (err) {
     Swal.fire({
       icon: 'error',

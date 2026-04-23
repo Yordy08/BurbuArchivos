@@ -32,14 +32,14 @@ declare module "nitropack/types" {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/[id].get').default>>>>
       'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/[id].put').default>>>>
     }
-    '/api/images/:id/download': {
-      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/[id]/download.post').default>>>>
-    }
     '/api/images/:slug': {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/[slug].get').default>>>>
     }
     '/api/images/by-slug/:slug': {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/by-slug/[slug].get').default>>>>
+    }
+    '/api/images/download': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/download.post').default>>>>
     }
     '/api/images/private-download/:id': {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/images/private-download/[id].get').default>>>>

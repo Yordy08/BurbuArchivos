@@ -2138,7 +2138,22 @@ _IiITc9FKNZnGYTVW6c8RZTbO5sWy5jFn0USxU7N5QY,
 _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw
 ];
 
-const assets = {};
+const assets = {
+  "/index.mjs": {
+    "type": "text/javascript; charset=utf-8",
+    "etag": "\"1f3ac-OubY5A46BTe4jMbUkrIRg2Bgrls\"",
+    "mtime": "2026-04-23T01:13:10.465Z",
+    "size": 127916,
+    "path": "index.mjs"
+  },
+  "/index.mjs.map": {
+    "type": "application/json",
+    "etag": "\"78240-elpp8Vrd1EfKUheQlp87FWIq8Ao\"",
+    "mtime": "2026-04-23T01:13:10.465Z",
+    "size": 492096,
+    "path": "index.mjs.map"
+  }
+};
 
 function readAsset (id) {
   const serverDir = dirname$1(fileURLToPath(globalThis._importMeta_.url));
@@ -2649,9 +2664,9 @@ const _lazy_6_lsmb = () => Promise.resolve().then(function () { return images_ge
 const _lazy_jFfyEs = () => Promise.resolve().then(function () { return _id__delete$1; });
 const _lazy_Ccr9FV = () => Promise.resolve().then(function () { return _id__get$3; });
 const _lazy_T1fRzs = () => Promise.resolve().then(function () { return _id__put$1; });
-const _lazy_IdAcOR = () => Promise.resolve().then(function () { return download_post$1; });
 const _lazy_NLbzSu = () => Promise.resolve().then(function () { return _slug__get$3; });
 const _lazy_61Wu5N = () => Promise.resolve().then(function () { return _slug__get$1; });
+const _lazy_s8jACA = () => Promise.resolve().then(function () { return download_post$1; });
 const _lazy_nUbfOJ = () => Promise.resolve().then(function () { return _id__get$1; });
 const _lazy_TSMVQZ = () => Promise.resolve().then(function () { return upload_post$1; });
 const _lazy_NDVelV = () => Promise.resolve().then(function () { return test_get$1; });
@@ -2672,9 +2687,9 @@ const handlers = [
   { route: '/api/images/:id', handler: _lazy_jFfyEs, lazy: true, middleware: false, method: "delete" },
   { route: '/api/images/:id', handler: _lazy_Ccr9FV, lazy: true, middleware: false, method: "get" },
   { route: '/api/images/:id', handler: _lazy_T1fRzs, lazy: true, middleware: false, method: "put" },
-  { route: '/api/images/:id/download', handler: _lazy_IdAcOR, lazy: true, middleware: false, method: "post" },
   { route: '/api/images/:slug', handler: _lazy_NLbzSu, lazy: true, middleware: false, method: "get" },
   { route: '/api/images/by-slug/:slug', handler: _lazy_61Wu5N, lazy: true, middleware: false, method: "get" },
+  { route: '/api/images/download', handler: _lazy_s8jACA, lazy: true, middleware: false, method: "post" },
   { route: '/api/images/private-download/:id', handler: _lazy_nUbfOJ, lazy: true, middleware: false, method: "get" },
   { route: '/api/images/upload', handler: _lazy_TSMVQZ, lazy: true, middleware: false, method: "post" },
   { route: '/api/test', handler: _lazy_NDVelV, lazy: true, middleware: false, method: "get" },
@@ -3181,23 +3196,39 @@ const logout_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.definePrope
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const me_get = defineEventHandler(async (event) => {
-  const userId = getCookie(event, "auth_token");
-  if (!userId) {
-    throw createError({ statusCode: 401, statusMessage: "No autorizado" });
-  }
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true
+  try {
+    const userId = getCookie(event, "auth_token");
+    if (!userId) {
+      throw createError({
+        statusCode: 401,
+        statusMessage: "No autorizado"
+      });
     }
-  });
-  if (!user) {
-    throw createError({ statusCode: 401, statusMessage: "Usuario no encontrado" });
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      include: {
+        images: {
+          orderBy: {
+            createdAt: "desc"
+          }
+        }
+      }
+    });
+    if (!user) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: "Usuario no encontrado"
+      });
+    }
+    return user;
+  } catch (error) {
+    throw createError({
+      statusCode: error.statusCode || 500,
+      statusMessage: error.statusMessage || "Error interno"
+    });
   }
-  return { user };
 });
 
 const me_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
@@ -3354,32 +3385,6 @@ const _id__put$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty
   default: _id__put
 }, Symbol.toStringTag, { value: 'Module' }));
 
-const download_post = defineEventHandler(async (event) => {
-  try {
-    const imageId = event.context.params.id;
-    const image = await prisma.image.update({
-      where: { id: imageId },
-      data: {
-        downloads: {
-          increment: 1
-        }
-      }
-    });
-    return { ok: true, downloads: image.downloads };
-  } catch (err) {
-    console.error("Error incrementing downloads:", err);
-    throw createError({
-      statusCode: 500,
-      statusMessage: err instanceof Error ? err.message : "Error registrando descarga"
-    });
-  }
-});
-
-const download_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
-  __proto__: null,
-  default: download_post
-}, Symbol.toStringTag, { value: 'Module' }));
-
 const _slug__get$2 = defineEventHandler(async (event) => {
   try {
     const slug = event.context.params.slug;
@@ -3437,6 +3442,26 @@ const _slug__get = defineEventHandler(async (event) => {
 const _slug__get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
   default: _slug__get
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const download_post = defineEventHandler(async (event) => {
+  const body = await readBody(event);
+  const image = await prisma.image.update({
+    where: { id: body.id },
+    data: {
+      downloads: {
+        increment: 1
+      }
+    }
+  });
+  return {
+    downloads: image.downloads
+  };
+});
+
+const download_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: download_post
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const _id__get = defineEventHandler(async (event) => {
