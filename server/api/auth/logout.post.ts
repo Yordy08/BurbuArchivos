@@ -1,10 +1,9 @@
 import { deleteCookie } from 'h3'
 
-export default defineEventHandler(async (event) => {
-  deleteCookie(event, 'auth_token')
+export default defineEventHandler((event) => {
+  deleteCookie(event, 'auth_token', {
+    path: '/'
+  })
 
-  return {
-    ok: true,
-    message: 'Sesión cerrada'
-  }
+  return { ok: true }
 })

@@ -17,7 +17,6 @@
     linear-gradient(135deg,
       #ffffff 0%,
       #ece3e5 35%,
-      #ff0033 75%,
-      #d40000 100%);
+      );
 }
 </style>

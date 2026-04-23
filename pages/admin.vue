@@ -12,6 +12,7 @@
           </div>
         </div>
       </div>
+
       <div class="col-md-3">
         <div class="card bg-success text-white">
           <div class="card-body">
@@ -20,6 +21,7 @@
           </div>
         </div>
       </div>
+
       <div class="col-md-3">
         <div class="card bg-info text-white">
           <div class="card-body">
@@ -28,6 +30,7 @@
           </div>
         </div>
       </div>
+
       <div class="col-md-3">
         <div class="card bg-warning text-dark">
           <div class="card-body">
@@ -40,20 +43,20 @@
       </div>
     </div>
 
-    <!-- Tabla de Imágenes -->
+    <!-- TABLA -->
     <div class="card shadow">
       <div class="card-header bg-danger text-white">
         <h5 class="mb-0">🖼️ Mis Imágenes</h5>
       </div>
+
       <div class="card-body">
+
         <div v-if="loading" class="text-center">
-          <div class="spinner-border text-danger" role="status">
-            <span class="visually-hidden">Cargando...</span>
-          </div>
+          <div class="spinner-border text-danger"></div>
         </div>
 
         <div v-else-if="images.length === 0" class="text-center text-muted">
-          <p>No tienes imágenes subidas.</p>
+          No tienes imágenes subidas.
         </div>
 
         <div v-else class="table-responsive">
@@ -69,120 +72,120 @@
                 <th>Acciones</th>
               </tr>
             </thead>
+
             <tbody>
               <tr v-for="image in images" :key="image.id">
+
                 <td>
                   <img
                     :src="image.urlOriginal"
-                    :alt="image.title"
-                    style="height: 50px; width: 50px; object-fit: cover; border-radius: 4px;"
+                    style="height:50px;width:50px;object-fit:cover;border-radius:5px"
                   />
                 </td>
+
                 <td>{{ image.title }}</td>
+
                 <td>
-                  <span :class="{ 'badge bg-success': image.visibility === 'public', 'badge bg-warning': image.visibility === 'private' }">
+                  <span
+                    :class="image.visibility === 'public'
+                      ? 'badge bg-success'
+                      : 'badge bg-warning'"
+                  >
                     {{ image.visibility }}
                   </span>
                 </td>
+
                 <td><strong>{{ image.downloads }}</strong></td>
+
                 <td>
-                  <span :class="{ 'badge bg-success': image.downloadable, 'badge bg-danger': !image.downloadable }">
+                  <span
+                    :class="image.downloadable
+                      ? 'badge bg-success'
+                      : 'badge bg-danger'"
+                  >
                     {{ image.downloadable ? 'Sí' : 'No' }}
                   </span>
                 </td>
-                <td>{{ new Date(image.createdAt).toLocaleDateString() }}</td>
+
+                <td>
+                  {{ new Date(image.createdAt).toLocaleDateString() }}
+                </td>
+
                 <td>
                   <button
+                    class="btn btn-sm btn-outline-primary me-1"
                     @click="editImage(image)"
-                    class="btn btn-sm btn-outline-primary me-2"
                   >
-                    ✏️ Editar
+                    ✏️
                   </button>
+
                   <NuxtLink
                     :to="`/foto/${image.slug}`"
-                    class="btn btn-sm btn-outline-secondary"
+                    class="btn btn-sm btn-outline-secondary me-1"
                   >
-                    👁️ Ver
+                    👁️
                   </NuxtLink>
+
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    @click="deleteImage(image)"
+                  >
+                    🗑️
+                  </button>
                 </td>
+
               </tr>
             </tbody>
+
           </table>
         </div>
+
       </div>
     </div>
 
-    <!-- Modal de Edición -->
+    <!-- MODAL -->
     <div
       v-if="showEditModal"
       class="modal d-block"
-      style="background-color: rgba(0, 0, 0, 0.5);"
+      style="background:rgba(0,0,0,.5)"
       @click.self="closeModal"
     >
       <div class="modal-dialog">
         <div class="modal-content">
+
           <div class="modal-header">
-            <h5 class="modal-title">Editar Imagen</h5>
-            <button
-              type="button"
-              class="btn-close"
-              @click="closeModal"
-            ></button>
+            <h5>Editar Imagen</h5>
+            <button class="btn-close" @click="closeModal"></button>
           </div>
+
           <div class="modal-body">
-            <form>
-              <div class="mb-3">
-                <label class="form-label">Título</label>
-                <input
-                  v-model="editingImage.title"
-                  type="text"
-                  class="form-control"
-                />
-              </div>
+            <input
+              v-model="editingImage.title"
+              class="form-control mb-3"
+              placeholder="Título"
+            />
 
-              <div class="mb-3">
-                <label class="form-label">Visibilidad</label>
-                <select v-model="editingImage.visibility" class="form-select">
-                  <option value="public">Pública</option>
-                  <option value="private">Privada</option>
-                </select>
-              </div>
+            <select v-model="editingImage.visibility" class="form-select mb-3">
+              <option value="public">Pública</option>
+              <option value="private">Privada</option>
+            </select>
 
-              <div class="mb-3 form-check">
-                <input
-                  v-model="editingImage.downloadable"
-                  type="checkbox"
-                  class="form-check-input"
-                  id="downloadable"
-                />
-                <label class="form-check-label" for="downloadable">
-                  Permitir descargas
-                </label>
-              </div>
-
-              <div class="mb-3 form-check">
-                <input
-                  v-model="editingImage.seoEnabled"
-                  type="checkbox"
-                  class="form-check-input"
-                  id="seoEnabled"
-                />
-                <label class="form-check-label" for="seoEnabled">
-                  SEO Habilitado
-                </label>
-              </div>
-            </form>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                v-model="editingImage.downloadable"
+                class="form-check-input"
+              />
+              <label>Descargable</label>
+            </div>
           </div>
+
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @click="closeModal"
-            >
+            <button class="btn btn-secondary" @click="closeModal">
               Cancelar
             </button>
+
             <button
-              type="button"
               class="btn btn-primary"
               @click="saveChanges"
               :disabled="saving"
@@ -190,9 +193,11 @@
               {{ saving ? 'Guardando...' : 'Guardar' }}
             </button>
           </div>
+
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -200,82 +205,51 @@
 import { ref, onMounted } from 'vue'
 import Swal from 'sweetalert2'
 
-const stats = ref({
-  totalImages: 0,
-  totalDownloads: 0,
-  totalUsers: 0,
-  lastLogin: null
-})
-
 const images = ref([])
 const loading = ref(true)
 const showEditModal = ref(false)
 const saving = ref(false)
 
-const editingImage = ref({
-  id: '',
-  title: '',
-  visibility: 'public',
-  downloadable: false,
-  seoEnabled: true
+const stats = ref({
+  totalImages: 0,
+  totalDownloads: 0,
+  totalUsers: 1,
+  lastLogin: null
 })
+
+const editingImage = ref({})
 
 onMounted(async () => {
-  await loadStats()
-  await loadImages()
+  await loadData()
 })
 
-/* SOLO DATOS DEL USUARIO LOGUEADO */
-const loadStats = async () => {
-  try {
-    const res = await fetch('/api/auth/me')
-
-    if (!res.ok) return
-
-    const user = await res.json()
-
-    const userImages = user.images || []
-
-    stats.value = {
-      totalImages: userImages.length,
-
-      totalDownloads: userImages.reduce(
-        (acc, img) => acc + (img.downloads || 0),
-        0
-      ),
-
-      totalUsers: 1,
-
-      lastLogin: user.lastLogin || null
-    }
-
-  } catch (err) {
-    console.error('Error loading stats:', err)
-  }
-}
-
-/* SOLO IMÁGENES DEL USUARIO */
-const loadImages = async () => {
+/* 🔥 UN SOLO FETCH (más estable) */
+const loadData = async () => {
   try {
     loading.value = true
 
     const res = await fetch('/api/auth/me')
-
-    if (!res.ok) return
-
     const user = await res.json()
 
     images.value = user.images || []
 
+    stats.value = {
+      totalImages: images.value.length,
+      totalDownloads: images.value.reduce((a, b) => a + (b.downloads || 0), 0),
+      totalUsers: 1,
+      lastLogin: user.lastLogin || null
+    }
+
   } catch (err) {
-    console.error('Error loading images:', err)
+    console.error(err)
   } finally {
     loading.value = false
   }
 }
 
-const editImage = (image) => {
-  editingImage.value = { ...image }
+/* EDIT */
+const editImage = (img) => {
+  editingImage.value = { ...img }
   showEditModal.value = true
 }
 
@@ -283,46 +257,55 @@ const closeModal = () => {
   showEditModal.value = false
 }
 
+/* SAVE */
 const saveChanges = async () => {
   try {
     saving.value = true
 
     const res = await fetch(`/api/images/${editingImage.value.id}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        title: editingImage.value.title,
-        visibility: editingImage.value.visibility,
-        downloadable: editingImage.value.downloadable,
-        seoEnabled: editingImage.value.seoEnabled
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editingImage.value)
     })
 
-    if (!res.ok) {
-      throw new Error('Error al actualizar')
-    }
+    if (!res.ok) throw new Error('Error al actualizar')
 
-    Swal.fire({
-      icon: 'success',
-      title: 'Imagen actualizada',
-      timer: 1500,
-      showConfirmButton: false
-    })
+    Swal.fire('OK', 'Actualizado', 'success')
 
     closeModal()
-    await loadImages()
-    await loadStats()
+    await loadData()
 
   } catch (err) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: err.message
-    })
+    Swal.fire('Error', err.message, 'error')
   } finally {
     saving.value = false
+  }
+}
+
+/* DELETE (YA FUNCIONA CON TU BACKEND) */
+const deleteImage = async (image) => {
+  const ok = await Swal.fire({
+    icon: 'warning',
+    title: 'Eliminar imagen?',
+    showCancelButton: true,
+    confirmButtonText: 'Sí'
+  })
+
+  if (!ok.isConfirmed) return
+
+  try {
+    const res = await fetch(`/api/images/${image.id}`, {
+      method: 'DELETE'
+    })
+
+    if (!res.ok) throw new Error('Error eliminando')
+
+    Swal.fire('Eliminado', 'Imagen borrada', 'success')
+
+    await loadData()
+
+  } catch (err) {
+    Swal.fire('Error', err.message, 'error')
   }
 }
 </script>

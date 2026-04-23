@@ -1,0 +1,92 @@
+:root {
+
+  /* 🔴 ROJOS PRINCIPALES */
+  --primary-red: #dc0a1e;
+  --dark-red: #b40000;
+  --deep-red: #a00a0a;
+
+  /* ⚫ NEUTROS */
+  --black: #000000;
+  --soft-black: #111111;
+
+  /* ⚪ BLANCOS / FONDOS */
+  --white: #ffffff;
+  --soft-bg: #fafafa;
+  --light-gray: #e9e9f2;
+
+  /* 🌸 TONO SECUNDARIO (del logo rosado/mauve) */
+  --mauve: #c8aab4;
+  --soft-mauve: #dcdce6;
+
+  /* ✨ SOMBRAS */
+  --shadow-sm: 0 2px 6px rgba(0,0,0,0.1);
+  --shadow-md: 0 8px 20px rgba(0,0,0,0.15);
+  --shadow-lg: 0 12px 30px rgba(0,0,0,0.2);
+
+  /* 🔥 TIPOGRAFÍA */
+  --font-main: 'Poppins', sans-serif;
+}
+
+/* =========================
+   ESTILOS BASE GLOBALES
+========================= */
+
+body {
+  background: var(--soft-bg);
+  color: var(--soft-black);
+  font-family: var(--font-main);
+}
+
+/* LINKS */
+a {
+  color: var(--primary-red);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--dark-red);
+}
+
+/* BOTONES BASE */
+.btn-primary {
+  background: var(--primary-red);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: var(--dark-red);
+}
+
+/* CARDS MODERNAS */
+.card {
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+/* TEXTOS IMPORTANTES */
+.text-primary {
+  color: var(--primary-red) !important;
+}
+
+.text-danger {
+  color: var(--dark-red) !important;
+}
+
+/* BACKGROUNDS */
+.bg-primary {
+  background: var(--primary-red) !important;
+}
+
+.bg-dark-red {
+  background: var(--dark-red) !important;
+}
+
+.bg-soft {
+  background: var(--soft-bg);
+}

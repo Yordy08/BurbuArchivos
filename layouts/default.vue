@@ -1,9 +1,13 @@
 <template>
-  <div class="d-flex flex-column min-vh-100">
+  <div class="app-layout">
+
     <Navbar />
-    <main class="flex-grow-1">
+
+    <main class="content">
       <slot />
     </main>
+
     <Footer />
+
   </div>
 </template>

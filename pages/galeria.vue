@@ -1,147 +1,223 @@
 <template>
-  <div class="container py-5">
-
-    <!-- TITULO -->
-    <div class="text-center mb-5">
-      <h1 class="fw-bold text-danger display-4">
-        🖼️ Galería de Imágenes
-      </h1>
-      <p class="text-muted">
-        Explora, descarga y visualiza imágenes
-      </p>
-    </div>
-
-    <!-- LOADING -->
-    <div v-if="loading" class="text-center py-5">
-      <div
-        class="spinner-border text-danger"
-        style="width:4rem;height:4rem;"
-      >
-        <span class="visually-hidden">Cargando...</span>
-      </div>
-    </div>
-
-    <!-- SIN IMÁGENES -->
-    <div
-      v-else-if="images.length === 0"
-      class="alert alert-warning text-center"
-    >
-      No hay imágenes disponibles.
-    </div>
-
-    <!-- GALERÍA -->
-    <div v-else class="row g-4">
+  <div class="container py-4">
+<p class="text-muted">
+          Explora imágenes compartidas por la comunidad
+        </p>
+    <!-- ALBUMS -->
+    <div class="row g-4">
 
       <div
-        v-for="image in images"
-        :key="image.id"
-        class="col-md-6 col-lg-4 col-xl-3"
+        v-for="album in albums"
+        :key="album.userId"
+        class="col-6 col-md-3"
       >
-        <div class="card h-100 shadow border-0">
+      
 
-          <!-- FOTO -->
-          <img
-            :src="image.urlOriginal"
-            :alt="image.title"
-            class="card-img-top"
-            style="height:220px; object-fit:cover;"
-          />
+        <div class="album-card" @click="openAlbum(album)">
 
-          <!-- CONTENIDO -->
-          <div class="card-body d-flex flex-column">
+          <div class="album-cover">
+            <img
+              :src="album.cover"
+              alt="album"
+            />
+          </div>
 
-            <h5 class="card-title text-danger fw-bold">
-              {{ image.title }}
-            </h5>
-
-            <p class="small text-muted mb-1">
-              👤 {{ image.user?.name || 'Usuario' }}
-            </p>
-
-            <p class="small text-muted">
-              📅 {{ formatDate(image.createdAt) }}
-            </p>
-
-            <!-- BOTONES -->
-            <div class="mt-auto d-grid gap-2">
-
-              <button
-                v-if="image.downloadable"
-                @click="downloadImage(image)"
-                class="btn btn-danger rounded-pill"
-              >
-                ⬇ Descargar
-              </button>
-
-              <button
-                v-else
-                class="btn btn-secondary rounded-pill"
-                disabled
-              >
-                ❌ Descarga bloqueada
-              </button>
-
-              <!-- VER IMAGEN POR SLUG -->
-              <NuxtLink
-                :to="`/foto/${image.slug}`"
-                class="btn btn-outline-dark rounded-pill"
-              >
-                👁 Ver Imagen
-              </NuxtLink>
-
-            </div>
-
+          <div class="album-info">
+            <h6> Álbum de: {{ album.userName }}</h6>
+            <small>{{ album.images.length }} fotos</small>
           </div>
 
         </div>
+
+      </div>
+
+    </div>
+
+    <!-- MODAL ALBUM -->
+    <div v-if="selectedAlbum" class="modal-backdrop" @click="closeAlbum">
+
+      <div class="modal-content" @click.stop>
+
+        <h4 class="mb-3 text-danger">
+          📁 {{ selectedAlbum.userName }}
+        </h4>
+
+        <div class="row g-2">
+
+          <div
+            v-for="img in selectedAlbum.images"
+            :key="img.id"
+            class="col-6"
+          >
+            <img
+              :src="img.urlOriginal"
+              class="img-fluid rounded pointer"
+              @click="openImage(img)"
+            />
+          </div>
+
+        </div>
+
+        <button class="btn btn-secondary w-100 mt-3" @click="closeAlbum">
+          Cerrar
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- MODAL IMAGEN -->
+    <div v-if="selectedImage" class="modal-backdrop" @click="closeImage">
+
+      <div class="modal-content" @click.stop>
+
+        <img :src="selectedImage.urlOriginal" class="img-fluid rounded"/>
+
+        <h5 class="mt-2">{{ selectedImage.title }}</h5>
+
+        <button class="btn btn-danger w-100 mt-2" @click="downloadImage">
+          ⬇ Descargar
+        </button>
+
+        <button class="btn btn-secondary w-100 mt-2" @click="closeImage">
+          Cerrar
+        </button>
+
       </div>
 
     </div>
 
   </div>
 </template>
-
 <script setup>
 import { ref, onMounted } from 'vue'
 
 const images = ref([])
-const loading = ref(true)
+const albums = ref([])
+
+const selectedAlbum = ref(null)
+const selectedImage = ref(null)
 
 onMounted(async () => {
-  try {
-    const res = await fetch('/api/images')
+  const res = await fetch('/api/images', {
+    credentials: 'include'
+  })
 
-    if (!res.ok) {
-      const errorText = await res.text()
-      console.error('ERROR API:', res.status, errorText)
-      return
-    }
+  const data = await res.json()
 
-    const data = await res.json()
+  images.value = Array.isArray(data) ? data : []
 
-    console.log('IMAGENES:', data)
+  console.log('IMÁGENES:', images.value)
 
-    images.value = data
-
-  } catch (error) {
-    console.error('FETCH ERROR:', error)
-  } finally {
-    loading.value = false
-  }
+  groupByUser()
 })
 
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString()
+/* 🔥 ALBUM POR USUARIO (ULTRA SEGURO) */
+const groupByUser = () => {
+  const map = {}
+
+  images.value.forEach(img => {
+
+    // 🔥 VALIDACIÓN COMPLETA
+    if (!img || !img.user || !img.user.id) return
+
+    const userId = img.user.id
+    const userName = img.user.name || 'Usuario'
+
+    if (!map[userId]) {
+      map[userId] = {
+        userId,
+        userName,
+        images: [],
+        cover: img.urlOriginal || '/placeholder.jpg'
+      }
+    }
+
+    map[userId].images.push(img)
+
+    // 🔥 si quieres portada más real
+    if (!map[userId].cover) {
+      map[userId].cover = img.urlOriginal
+    }
+  })
+
+  albums.value = Object.values(map)
+
+  console.log('ALBUMS FINAL:', albums.value)
 }
 
-const downloadImage = (image) => {
-  try {
-    const link = document.createElement('a')
-    link.href = image.urlOriginal
-    link.download = `${image.slug}.jpg`
-    link.click()
-  } catch (error) {
-    console.error('Error descargando:', error)
-  }
+/* ALBUM */
+const openAlbum = (album) => {
+  selectedAlbum.value = album
+}
+
+const closeAlbum = () => {
+  selectedAlbum.value = null
+}
+
+/* IMAGE */
+const openImage = (img) => {
+  selectedImage.value = img
+}
+
+const closeImage = () => {
+  selectedImage.value = null
+}
+
+/* DOWNLOAD */
+const downloadImage = () => {
+  const link = document.createElement('a')
+  link.href = selectedImage.value.urlOriginal
+  link.download = selectedImage.value.title || 'imagen.jpg'
+  link.click()
 }
 </script>
+<style scoped>
+.album-card {
+  cursor: pointer;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: 0.3s;
+}
+
+.album-card:hover {
+  transform: translateY(-5px);
+}
+
+.album-cover img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+.album-info {
+  padding: 10px;
+  text-align: center;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+/* MODAL */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+}
+</style>

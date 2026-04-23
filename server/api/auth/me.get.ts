@@ -23,4 +23,6 @@ export default defineEventHandler(async (event) => {
   }
 
   return { user }
-})
+}) 
+
+/// Nota: este endpoint es para obtener los datos del usuario autenticado, no para listar usuarios.

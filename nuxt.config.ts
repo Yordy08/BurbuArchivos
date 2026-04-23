@@ -8,7 +8,8 @@ export default defineNuxtConfig({
 
   css: [
     '~/assets/css/main.css',
-    'bootstrap/dist/css/bootstrap.min.css'
+    'bootstrap/dist/css/bootstrap.min.css',
+     '~/assets/css/global.css'
   ],
 
   modules: [], 

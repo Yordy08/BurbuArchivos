@@ -10,6 +10,7 @@ export default defineEventHandler(async () => {
       include: {
         user: {
           select: {
+            id: true,        // 🔥 ESTO FALTABA
             name: true,
             email: true
           }
@@ -20,13 +21,10 @@ export default defineEventHandler(async () => {
       }
     })
 
-    // 🔥 PROTECCIÓN: eliminar corruptos sin romper el API
-    const safeImages = images.map(img => ({
+    return images.map(img => ({
       ...img,
-      updatedAt: img.updatedAt ?? img.createdAt // fallback seguro
+      updatedAt: img.updatedAt ?? img.createdAt
     }))
-
-    return safeImages
 
   } catch (error: any) {
     console.error(error)

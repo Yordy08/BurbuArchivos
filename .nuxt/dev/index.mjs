@@ -2138,22 +2138,7 @@ _IiITc9FKNZnGYTVW6c8RZTbO5sWy5jFn0USxU7N5QY,
 _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw
 ];
 
-const assets = {
-  "/index.mjs": {
-    "type": "text/javascript; charset=utf-8",
-    "etag": "\"1fc42-OQBA4hBk9oLSvYqkFrBHE7WPLZs\"",
-    "mtime": "2026-04-23T03:53:58.195Z",
-    "size": 130114,
-    "path": "index.mjs"
-  },
-  "/index.mjs.map": {
-    "type": "application/json",
-    "etag": "\"79baa-ZdYUhXCxrgCcD7n1NeGHopz9kp0\"",
-    "mtime": "2026-04-23T03:53:58.196Z",
-    "size": 498602,
-    "path": "index.mjs.map"
-  }
-};
+const assets = {};
 
 function readAsset (id) {
   const serverDir = dirname$1(fileURLToPath(globalThis._importMeta_.url));
@@ -3212,12 +3197,11 @@ const login_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProper
   default: login_post
 }, Symbol.toStringTag, { value: 'Module' }));
 
-const logout_post = defineEventHandler(async (event) => {
-  deleteCookie(event, "auth_token");
-  return {
-    ok: true,
-    message: "Sesi\xF3n cerrada"
-  };
+const logout_post = defineEventHandler((event) => {
+  deleteCookie(event, "auth_token", {
+    path: "/"
+  });
+  return { ok: true };
 });
 
 const logout_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
@@ -3306,6 +3290,8 @@ const images_get = defineEventHandler(async () => {
       include: {
         user: {
           select: {
+            id: true,
+            // 🔥 ESTO FALTABA
             name: true,
             email: true
           }
@@ -3315,15 +3301,13 @@ const images_get = defineEventHandler(async () => {
         createdAt: "desc"
       }
     });
-    const safeImages = images.map((img) => {
+    return images.map((img) => {
       var _a;
       return {
         ...img,
         updatedAt: (_a = img.updatedAt) != null ? _a : img.createdAt
-        // fallback seguro
       };
     });
-    return safeImages;
   } catch (error) {
     console.error(error);
     return {
@@ -3453,14 +3437,23 @@ const _slug__get$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProper
 const _slug__get = defineEventHandler(async (event) => {
   var _a;
   const slug = (_a = event.context.params) == null ? void 0 : _a.slug;
-  const image = await prisma.image.findUnique({
-    where: { slug },
+  const userId = getCookie(event, "auth_token");
+  console.log("\u{1F50D} SLUG:", slug);
+  console.log("\u{1F464} USER:", userId);
+  const whereConditions = {
+    slug,
+    OR: [
+      { visibility: "public" }
+      // Permite imágenes públicas
+    ]
+  };
+  if (userId) {
+    whereConditions.OR.push({ userId });
+  }
+  const image = await prisma.image.findFirst({
+    where: whereConditions,
     include: {
-      user: {
-        select: {
-          name: true
-        }
-      }
+      user: true
     }
   });
   if (!image) {

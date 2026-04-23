@@ -3,78 +3,47 @@
 
     <!-- Loading -->
     <div v-if="loading" class="text-center py-5">
-      <div class="spinner-border text-danger" role="status">
-        <span class="visually-hidden">Cargando...</span>
-      </div>
+      <div class="spinner-border text-danger"></div>
     </div>
 
-    <!-- Imagen encontrada -->
+    <!-- Imagen -->
     <div v-else-if="image" class="row g-4">
 
-      <!-- Imagen -->
       <div class="col-lg-8">
         <img
           :src="image.urlOriginal"
           :alt="image.title"
-          class="img-fluid rounded shadow-lg w-100"
+          class="img-fluid rounded shadow w-100"
         />
       </div>
 
-      <!-- Información -->
       <div class="col-lg-4">
-        <div class="card shadow border-0 h-100">
+        <div class="card shadow border-0">
           <div class="card-body">
 
-            <h1 class="fw-bold text-danger mb-3">
+            <h3 class="text-danger fw-bold">
               {{ image.title }}
-            </h1>
+            </h3>
 
-            <p class="mb-2">
-              <strong>👤 Subido por:</strong>
-              {{ image.user?.name || 'Usuario' }}
+            <p>
+              👤 {{ image.user?.name || 'Sin usuario' }}
             </p>
 
-            <p class="mb-2">
-              <strong>📅 Fecha:</strong>
-              {{ new Date(image.createdAt).toLocaleDateString() }}
+            <p>
+              📅 {{ new Date(image.createdAt).toLocaleDateString() }}
             </p>
 
-            <p class="mb-2">
-              <strong>⬇ Descargas:</strong>
-              {{ image.downloads }}
+            <p>
+              ⬇ {{ image.downloads }}
             </p>
 
-            <p class="mb-4">
-              <strong>🌍 Visibilidad:</strong>
-              {{ image.visibility }}
-            </p>
-
-            <div class="d-grid gap-2">
-
-              <button
-                v-if="image.downloadable"
-                @click="downloadImage"
-                class="btn btn-danger"
-              >
-                ⬇ Descargar Imagen
-              </button>
-
-              <button
-                v-else
-                class="btn btn-secondary"
-                disabled
-              >
-                ❌ Descarga bloqueada
-              </button>
-
-              <NuxtLink
-                to="/galeria"
-                class="btn btn-outline-dark"
-              >
-                ← Volver a Galería
-              </NuxtLink>
-
-            </div>
+            <button
+              v-if="image.downloadable"
+              class="btn btn-danger w-100"
+              @click="downloadImage"
+            >
+              Descargar
+            </button>
 
           </div>
         </div>
@@ -84,7 +53,7 @@
 
     <!-- No encontrada -->
     <div v-else class="alert alert-warning text-center">
-      📸 Imagen no encontrada.
+      Imagen no encontrada
     </div>
 
   </div>
@@ -103,16 +72,24 @@ onMounted(async () => {
   try {
     const slug = route.params.slug
 
-    const res = await fetch(`/api/images/${slug}`)
+    console.log('SLUG QUE LLEGA:', slug)
 
-    if (!res.ok) {
-      throw new Error('Imagen no encontrada')
-    }
+    const res = await fetch(`/api/images/${slug}`, {
+      credentials: 'include'
+    })
 
-    image.value = await res.json()
+    console.log('STATUS:', res.status)
 
-  } catch (error) {
-    console.error('Error cargando imagen:', error)
+    const data = await res.json().catch(() => null)
+
+    console.log('DATA BACKEND:', data)
+
+    if (!res.ok) throw new Error('No encontrada')
+
+    image.value = data
+
+  } catch (err) {
+    console.error('ERROR FRONT:', err)
     image.value = null
   } finally {
     loading.value = false
@@ -127,13 +104,13 @@ const downloadImage = async () => {
     link.click()
 
     await fetch(`/api/images/${image.value.id}/download`, {
-      method: 'POST'
+      method: 'POST',
+      credentials: 'include'
     })
 
     image.value.downloads++
-
-  } catch (error) {
-    console.error('Error descargando imagen:', error)
+  } catch (e) {
+    console.error(e)
   }
 }
 </script>
