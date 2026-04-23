@@ -21,12 +21,12 @@ export default defineEventHandler(async (event) => {
 
   // 🔢 estadísticas globales
   const totalImages = await prisma.image.count()
-
-  const totalLogins = await prisma.loginLog.count()
+  const totalUsers = await prisma.user.count()
 
   return {
     users,
     totalImages,
-    totalLogins
+    totalUsers
   }
 })
+

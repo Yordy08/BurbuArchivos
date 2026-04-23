@@ -701,9 +701,9 @@ new Proxy(/* @__PURE__ */ Object.create(null), {
   }
 });
 
-const config$1 = useRuntimeConfig();
+const config$2 = useRuntimeConfig();
 const _routeRulesMatcher = toRouteMatcher(
-  createRouter({ routes: config$1.nitro.routeRules })
+  createRouter({ routes: config$2.nitro.routeRules })
 );
 function createRouteRulesHandler(ctx) {
   return eventHandler((event) => {
@@ -2244,7 +2244,7 @@ const _LC84kH = defineEventHandler(async (event) => {
     "/privacidad",
     "/terminos"
   ];
-  if (publicPaths.includes(path) || path.startsWith("/_nuxt/") || path.startsWith("/favicon") || path.startsWith("/api/auth/login") || path.startsWith("/api/auth/register") || path.startsWith("/api/images") || path.startsWith("/foto/")) {
+  if (publicPaths.includes(path) || path.startsWith("/_nuxt/") || path.startsWith("/favicon") || path.startsWith("/api/auth/login") || path.startsWith("/api/auth/register") || path.startsWith("/api/auth/me") || path.startsWith("/api/images") || path.startsWith("/foto/")) {
     return;
   }
   const userId = getCookie(event, "auth_token");
@@ -2256,7 +2256,7 @@ const _LC84kH = defineEventHandler(async (event) => {
   }
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true }
+    select: { id: true, role: true }
   });
   if (!user) {
     throw createError({
@@ -2265,6 +2265,7 @@ const _LC84kH = defineEventHandler(async (event) => {
     });
   }
   event.context.userId = user.id;
+  event.context.user = user;
 });
 
 const VueResolver = (_, value) => {
@@ -2639,9 +2640,11 @@ async function getIslandContext(event) {
 }
 
 const _lazy_BTCkkv = () => Promise.resolve().then(function () { return images_get$3; });
-const _lazy_D2b7hm = () => Promise.resolve().then(function () { return _id__put$5; });
+const _lazy_D2b7hm = () => Promise.resolve().then(function () { return _id__put$7; });
 const _lazy_cX1Cg2 = () => Promise.resolve().then(function () { return stats_get$1; });
 const _lazy_7_Y9HK = () => Promise.resolve().then(function () { return users_get$1; });
+const _lazy__rp0Y7 = () => Promise.resolve().then(function () { return _id__put$5; });
+const _lazy_Nhle7R = () => Promise.resolve().then(function () { return resetPassword_post$3; });
 const _lazy_aNaQvJ = () => Promise.resolve().then(function () { return login_post$1; });
 const _lazy_1BEOGc = () => Promise.resolve().then(function () { return logout_post$1; });
 const _lazy_rSGfe7 = () => Promise.resolve().then(function () { return me_get$1; });
@@ -2668,6 +2671,8 @@ const handlers = [
   { route: '/api/admin/images/:id', handler: _lazy_D2b7hm, lazy: true, middleware: false, method: "put" },
   { route: '/api/admin/stats', handler: _lazy_cX1Cg2, lazy: true, middleware: false, method: "get" },
   { route: '/api/admin/users', handler: _lazy_7_Y9HK, lazy: true, middleware: false, method: "get" },
+  { route: '/api/admin/users/:id', handler: _lazy__rp0Y7, lazy: true, middleware: false, method: "put" },
+  { route: '/api/admin/users/:id/reset-password', handler: _lazy_Nhle7R, lazy: true, middleware: false, method: "post" },
   { route: '/api/auth/login', handler: _lazy_aNaQvJ, lazy: true, middleware: false, method: "post" },
   { route: '/api/auth/logout', handler: _lazy_1BEOGc, lazy: true, middleware: false, method: "post" },
   { route: '/api/auth/me', handler: _lazy_rSGfe7, lazy: true, middleware: false, method: "get" },
@@ -3052,7 +3057,7 @@ const images_get$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProper
   default: images_get$2
 }, Symbol.toStringTag, { value: 'Module' }));
 
-const _id__put$4 = defineEventHandler(async (event) => {
+const _id__put$6 = defineEventHandler(async (event) => {
   var _a;
   try {
     const userId = getCookie(event, "auth_token");
@@ -3090,9 +3095,9 @@ const _id__put$4 = defineEventHandler(async (event) => {
   }
 });
 
-const _id__put$5 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+const _id__put$7 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
-  default: _id__put$4
+  default: _id__put$6
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const stats_get = defineEventHandler(async (event) => {
@@ -3152,17 +3157,78 @@ const users_get = defineEventHandler(async (event) => {
     }
   });
   const totalImages = await prisma.image.count();
-  const totalLogins = await prisma.loginLog.count();
+  const totalUsers = await prisma.user.count();
   return {
     users,
     totalImages,
-    totalLogins
+    totalUsers
   };
 });
 
 const users_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
   default: users_get
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _id__put$4 = defineEventHandler(async (event) => {
+  var _a;
+  const user = event.context.user;
+  if (!user || user.role !== "admin") {
+    throw createError({ statusCode: 403, statusMessage: "Forbidden" });
+  }
+  const id = (_a = event.context.params) == null ? void 0 : _a.id;
+  const body = await readBody(event);
+  if (!id) {
+    throw createError({ statusCode: 400, statusMessage: "ID requerido" });
+  }
+  const data = {
+    name: body.name,
+    email: body.email,
+    role: body.role
+  };
+  if (body.password && body.password.trim().length > 0) {
+    data.password = await bcrypt.hash(body.password.trim(), 10);
+  }
+  const updated = await prisma.user.update({
+    where: { id },
+    data
+  });
+  return { success: true, user: updated };
+});
+
+const _id__put$5 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _id__put$4
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const resetPassword_post$2 = defineEventHandler(async (event) => {
+  var _a;
+  const user = event.context.user;
+  if (!user || user.role !== "admin") {
+    throw createError({ statusCode: 403, statusMessage: "Forbidden" });
+  }
+  const id = (_a = event.context.params) == null ? void 0 : _a.id;
+  if (!id) {
+    throw createError({ statusCode: 400, statusMessage: "ID requerido" });
+  }
+  const newPassword = "12345678";
+  const hashed = await bcrypt.hash(newPassword, 10);
+  await prisma.user.update({
+    where: { id },
+    data: {
+      password: hashed
+    }
+  });
+  return {
+    success: true,
+    message: "Contrase\xF1a reseteada",
+    tempPassword: newPassword
+  };
+});
+
+const resetPassword_post$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: resetPassword_post$2
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const login_post = defineEventHandler(async (event) => {
@@ -3322,23 +3388,50 @@ const images_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProper
   default: images_get
 }, Symbol.toStringTag, { value: 'Module' }));
 
+const config$1 = useRuntimeConfig();
+v2.config({
+  cloud_name: config$1.CLOUDINARY_CLOUD_NAME,
+  api_key: config$1.CLOUDINARY_API_KEY,
+  api_secret: config$1.CLOUDINARY_API_SECRET
+});
 const _id__delete = defineEventHandler(async (event) => {
   var _a;
-  const id = (_a = event.context.params) == null ? void 0 : _a.id;
-  if (!id) {
-    throw createError({ statusCode: 400, statusMessage: "ID no v\xE1lido" });
-  }
   try {
+    const userId = getCookie(event, "auth_token");
+    if (!userId) {
+      throw createError({ statusCode: 401, statusMessage: "No autorizado" });
+    }
+    const id = (_a = event.context.params) == null ? void 0 : _a.id;
+    if (!id) {
+      throw createError({ statusCode: 400, statusMessage: "ID no v\xE1lido" });
+    }
+    const image = await prisma.image.findUnique({
+      where: { id }
+    });
+    if (!image) {
+      throw createError({ statusCode: 404, statusMessage: "La imagen no existe" });
+    }
+    if (image.userId !== userId) {
+      throw createError({ statusCode: 403, statusMessage: "No tienes permiso para eliminar esta imagen" });
+    }
+    let publicId = image.publicId;
+    if (!publicId && image.urlOriginal) {
+      const match = image.urlOriginal.match(/\/upload\/v\d+\/(.+)\./);
+      if (match && match[1]) {
+        publicId = match[1];
+      }
+    }
+    if (publicId) {
+      await v2.uploader.destroy(publicId);
+    }
     await prisma.image.delete({
       where: { id }
     });
-    return {
-      ok: true
-    };
+    return { ok: true };
   } catch (error) {
     throw createError({
-      statusCode: 404,
-      statusMessage: "No se pudo eliminar: La imagen no existe"
+      statusCode: error.statusCode || 500,
+      statusMessage: error.statusMessage || "Error eliminando imagen"
     });
   }
 });
@@ -3373,26 +3466,43 @@ const _id__get$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty
 
 const _id__put$2 = defineEventHandler(async (event) => {
   var _a;
-  const id = (_a = event.context.params) == null ? void 0 : _a.id;
-  const body = await readBody(event);
   try {
-    const image = await prisma.image.update({
+    const userId = getCookie(event, "auth_token");
+    if (!userId) {
+      throw createError({ statusCode: 401, statusMessage: "No autorizado" });
+    }
+    const id = (_a = event.context.params) == null ? void 0 : _a.id;
+    if (!id) {
+      throw createError({ statusCode: 400, statusMessage: "ID no v\xE1lido" });
+    }
+    const image = await prisma.image.findUnique({
+      where: { id }
+    });
+    if (!image) {
+      throw createError({ statusCode: 404, statusMessage: "La imagen no existe" });
+    }
+    if (image.userId !== userId) {
+      throw createError({ statusCode: 403, statusMessage: "No tienes permiso para editar esta imagen" });
+    }
+    const body = await readBody(event);
+    const { title, visibility, downloadable, seoEnabled } = body || {};
+    const updatedImage = await prisma.image.update({
       where: { id },
       data: {
-        title: body.title,
-        visibility: body.visibility,
-        downloadable: body.downloadable,
-        seoEnabled: body.seoEnabled
+        title,
+        visibility,
+        downloadable,
+        seoEnabled
       }
     });
     return {
       ok: true,
-      image
+      image: updatedImage
     };
   } catch (error) {
     throw createError({
-      statusCode: 404,
-      statusMessage: "No se pudo actualizar: La imagen no existe"
+      statusCode: error.statusCode || 500,
+      statusMessage: error.statusMessage || "Error actualizando imagen"
     });
   }
 });
@@ -3581,6 +3691,7 @@ const upload_post = defineEventHandler(async (event) => {
             title,
             slug,
             urlOriginal: uploadResult.secure_url,
+            publicId: uploadResult.public_id,
             visibility,
             downloadable,
             seoEnabled,

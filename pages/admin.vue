@@ -228,16 +228,19 @@ const loadData = async () => {
   try {
     loading.value = true
 
-    const res = await fetch('/api/auth/me')
-    const user = await res.json()
+    const [imagesRes, statsRes] = await Promise.all([
+      fetch('/api/admin/images'),
+      fetch('/api/admin/stats')
+    ])
 
-    images.value = user.images || []
+    images.value = await imagesRes.json()
 
+    const statsData = await statsRes.json()
     stats.value = {
-      totalImages: images.value.length,
-      totalDownloads: images.value.reduce((a, b) => a + (b.downloads || 0), 0),
-      totalUsers: 1,
-      lastLogin: user.lastLogin || null
+      totalImages: statsData.totalImages,
+      totalDownloads: statsData.totalDownloads,
+      totalUsers: statsData.totalUsers,
+      lastLogin: statsData.lastLogin || null
     }
 
   } catch (err) {

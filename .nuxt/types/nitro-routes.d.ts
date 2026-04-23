@@ -15,6 +15,12 @@ declare module "nitropack/types" {
     '/api/admin/users': {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/users.get').default>>>>
     }
+    '/api/admin/users/:id': {
+      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/users/[id].put').default>>>>
+    }
+    '/api/admin/users/:id/reset-password': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/users/[id]/reset-password.post').default>>>>
+    }
     '/api/auth/login': {
       'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/login.post').default>>>>
     }

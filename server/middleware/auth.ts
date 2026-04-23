@@ -21,6 +21,7 @@ export default defineEventHandler(async (event) => {
     path.startsWith('/favicon') ||
     path.startsWith('/api/auth/login') ||
     path.startsWith('/api/auth/register') ||
+    path.startsWith('/api/auth/me') ||
     path.startsWith('/api/images') ||
     path.startsWith('/foto/')
   ) {
@@ -38,7 +39,7 @@ export default defineEventHandler(async (event) => {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true }
+    select: { id: true, role: true }
   })
 
   if (!user) {
@@ -49,4 +50,5 @@ export default defineEventHandler(async (event) => {
   }
 
   event.context.userId = user.id
+  event.context.user = user
 })

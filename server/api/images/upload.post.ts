@@ -97,6 +97,7 @@ export default defineEventHandler(async (event) => {
             title,
             slug,
             urlOriginal: uploadResult.secure_url,
+            publicId: uploadResult.public_id,
             visibility,
             downloadable,
             seoEnabled,
@@ -119,3 +120,4 @@ export default defineEventHandler(async (event) => {
     })
   }
 })
+
