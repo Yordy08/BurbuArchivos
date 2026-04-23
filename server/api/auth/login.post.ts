@@ -21,12 +21,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Actualizar lastLogin
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { lastLogin: new Date() }
-  })
-
   // sesión simple (NO JWT aún)
   setCookie(event, 'auth_token', String(user.id), {
     httpOnly: true,

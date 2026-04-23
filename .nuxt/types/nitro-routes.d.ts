@@ -12,6 +12,9 @@ declare module "nitropack/types" {
     '/api/admin/stats': {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/stats.get').default>>>>
     }
+    '/api/admin/users': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/users.get').default>>>>
+    }
     '/api/auth/login': {
       'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/login.post').default>>>>
     }
@@ -49,6 +52,12 @@ declare module "nitropack/types" {
     }
     '/api/test': {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/test.get').default>>>>
+    }
+    '/api/users/:id': {
+      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/[id].put').default>>>>
+    }
+    '/api/users/:id/reset-password': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/[id]/reset-password.post').default>>>>
     }
     '/api/users/profile': {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/profile.get').default>>>>

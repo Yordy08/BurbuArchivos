@@ -2141,16 +2141,16 @@ _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw
 const assets = {
   "/index.mjs": {
     "type": "text/javascript; charset=utf-8",
-    "etag": "\"1f3ac-OubY5A46BTe4jMbUkrIRg2Bgrls\"",
-    "mtime": "2026-04-23T01:13:10.465Z",
-    "size": 127916,
+    "etag": "\"1fc42-OQBA4hBk9oLSvYqkFrBHE7WPLZs\"",
+    "mtime": "2026-04-23T03:53:58.195Z",
+    "size": 130114,
     "path": "index.mjs"
   },
   "/index.mjs.map": {
     "type": "application/json",
-    "etag": "\"78240-elpp8Vrd1EfKUheQlp87FWIq8Ao\"",
-    "mtime": "2026-04-23T01:13:10.465Z",
-    "size": 492096,
+    "etag": "\"79baa-ZdYUhXCxrgCcD7n1NeGHopz9kp0\"",
+    "mtime": "2026-04-23T03:53:58.196Z",
+    "size": 498602,
     "path": "index.mjs.map"
   }
 };
@@ -2654,8 +2654,9 @@ async function getIslandContext(event) {
 }
 
 const _lazy_BTCkkv = () => Promise.resolve().then(function () { return images_get$3; });
-const _lazy_D2b7hm = () => Promise.resolve().then(function () { return _id__put$3; });
+const _lazy_D2b7hm = () => Promise.resolve().then(function () { return _id__put$5; });
 const _lazy_cX1Cg2 = () => Promise.resolve().then(function () { return stats_get$1; });
+const _lazy_7_Y9HK = () => Promise.resolve().then(function () { return users_get$1; });
 const _lazy_aNaQvJ = () => Promise.resolve().then(function () { return login_post$1; });
 const _lazy_1BEOGc = () => Promise.resolve().then(function () { return logout_post$1; });
 const _lazy_rSGfe7 = () => Promise.resolve().then(function () { return me_get$1; });
@@ -2663,13 +2664,15 @@ const _lazy_9UWqTL = () => Promise.resolve().then(function () { return register_
 const _lazy_6_lsmb = () => Promise.resolve().then(function () { return images_get$1; });
 const _lazy_jFfyEs = () => Promise.resolve().then(function () { return _id__delete$1; });
 const _lazy_Ccr9FV = () => Promise.resolve().then(function () { return _id__get$3; });
-const _lazy_T1fRzs = () => Promise.resolve().then(function () { return _id__put$1; });
+const _lazy_T1fRzs = () => Promise.resolve().then(function () { return _id__put$3; });
 const _lazy_NLbzSu = () => Promise.resolve().then(function () { return _slug__get$3; });
 const _lazy_61Wu5N = () => Promise.resolve().then(function () { return _slug__get$1; });
 const _lazy_s8jACA = () => Promise.resolve().then(function () { return download_post$1; });
 const _lazy_nUbfOJ = () => Promise.resolve().then(function () { return _id__get$1; });
 const _lazy_TSMVQZ = () => Promise.resolve().then(function () { return upload_post$1; });
 const _lazy_NDVelV = () => Promise.resolve().then(function () { return test_get$1; });
+const _lazy_8kry35 = () => Promise.resolve().then(function () { return _id__put$1; });
+const _lazy_HgxbO3 = () => Promise.resolve().then(function () { return resetPassword_post$1; });
 const _lazy_Z8INUN = () => Promise.resolve().then(function () { return profile_get; });
 const _lazy__MfTK5 = () => Promise.resolve().then(function () { return renderer; });
 
@@ -2679,6 +2682,7 @@ const handlers = [
   { route: '/api/admin/images', handler: _lazy_BTCkkv, lazy: true, middleware: false, method: "get" },
   { route: '/api/admin/images/:id', handler: _lazy_D2b7hm, lazy: true, middleware: false, method: "put" },
   { route: '/api/admin/stats', handler: _lazy_cX1Cg2, lazy: true, middleware: false, method: "get" },
+  { route: '/api/admin/users', handler: _lazy_7_Y9HK, lazy: true, middleware: false, method: "get" },
   { route: '/api/auth/login', handler: _lazy_aNaQvJ, lazy: true, middleware: false, method: "post" },
   { route: '/api/auth/logout', handler: _lazy_1BEOGc, lazy: true, middleware: false, method: "post" },
   { route: '/api/auth/me', handler: _lazy_rSGfe7, lazy: true, middleware: false, method: "get" },
@@ -2693,6 +2697,8 @@ const handlers = [
   { route: '/api/images/private-download/:id', handler: _lazy_nUbfOJ, lazy: true, middleware: false, method: "get" },
   { route: '/api/images/upload', handler: _lazy_TSMVQZ, lazy: true, middleware: false, method: "post" },
   { route: '/api/test', handler: _lazy_NDVelV, lazy: true, middleware: false, method: "get" },
+  { route: '/api/users/:id', handler: _lazy_8kry35, lazy: true, middleware: false, method: "put" },
+  { route: '/api/users/:id/reset-password', handler: _lazy_HgxbO3, lazy: true, middleware: false, method: "post" },
   { route: '/api/users/profile', handler: _lazy_Z8INUN, lazy: true, middleware: false, method: "get" },
   { route: '/__nuxt_error', handler: _lazy__MfTK5, lazy: true, middleware: false, method: undefined },
   { route: '/__nuxt_island/**', handler: handler$1, lazy: false, middleware: false, method: undefined },
@@ -3061,7 +3067,7 @@ const images_get$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProper
   default: images_get$2
 }, Symbol.toStringTag, { value: 'Module' }));
 
-const _id__put$2 = defineEventHandler(async (event) => {
+const _id__put$4 = defineEventHandler(async (event) => {
   var _a;
   try {
     const userId = getCookie(event, "auth_token");
@@ -3099,9 +3105,9 @@ const _id__put$2 = defineEventHandler(async (event) => {
   }
 });
 
-const _id__put$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+const _id__put$5 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
-  default: _id__put$2
+  default: _id__put$4
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const stats_get = defineEventHandler(async (event) => {
@@ -3146,6 +3152,34 @@ const stats_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.definePropert
   default: stats_get
 }, Symbol.toStringTag, { value: 'Module' }));
 
+const users_get = defineEventHandler(async (event) => {
+  const user = event.context.user;
+  if (!user || user.role !== "admin") {
+    throw createError({ statusCode: 403, statusMessage: "Forbidden" });
+  }
+  const users = await prisma.user.findMany({
+    include: {
+      _count: {
+        select: {
+          images: true
+        }
+      }
+    }
+  });
+  const totalImages = await prisma.image.count();
+  const totalLogins = await prisma.loginLog.count();
+  return {
+    users,
+    totalImages,
+    totalLogins
+  };
+});
+
+const users_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: users_get
+}, Symbol.toStringTag, { value: 'Module' }));
+
 const login_post = defineEventHandler(async (event) => {
   const body = await readBody(event);
   const { email, password } = body;
@@ -3159,10 +3193,6 @@ const login_post = defineEventHandler(async (event) => {
       statusMessage: "Credenciales inv\xE1lidas"
     });
   }
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { lastLogin: /* @__PURE__ */ new Date() }
-  });
   setCookie(event, "auth_token", String(user.id), {
     httpOnly: true,
     secure: false
@@ -3196,39 +3226,23 @@ const logout_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.definePrope
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const me_get = defineEventHandler(async (event) => {
-  try {
-    const userId = getCookie(event, "auth_token");
-    if (!userId) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: "No autorizado"
-      });
-    }
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId
-      },
-      include: {
-        images: {
-          orderBy: {
-            createdAt: "desc"
-          }
-        }
-      }
-    });
-    if (!user) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "Usuario no encontrado"
-      });
-    }
-    return user;
-  } catch (error) {
-    throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.statusMessage || "Error interno"
-    });
+  const userId = getCookie(event, "auth_token");
+  if (!userId) {
+    throw createError({ statusCode: 401, statusMessage: "No autorizado" });
   }
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true
+    }
+  });
+  if (!user) {
+    throw createError({ statusCode: 401, statusMessage: "Usuario no encontrado" });
+  }
+  return { user };
 });
 
 const me_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
@@ -3240,7 +3254,10 @@ const register_post = defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
     if (!body.email || !body.password) {
-      throw createError({ statusCode: 400, statusMessage: "Datos incompletos" });
+      throw createError({
+        statusCode: 400,
+        message: "Datos incompletos"
+      });
     }
     const existe = await prisma.user.findUnique({
       where: { email: body.email }
@@ -3248,7 +3265,7 @@ const register_post = defineEventHandler(async (event) => {
     if (existe) {
       throw createError({
         statusCode: 400,
-        statusMessage: "Este correo electr\xF3nico ya est\xE1 registrado"
+        message: "Este correo ya est\xE1 registrado"
       });
     }
     const hash = await bcrypt.hash(body.password, 10);
@@ -3270,7 +3287,7 @@ const register_post = defineEventHandler(async (event) => {
   } catch (error) {
     throw createError({
       statusCode: error.statusCode || 500,
-      statusMessage: error.statusMessage || "Error en el servidor"
+      message: error.message || "Error en el servidor"
     });
   }
 });
@@ -3280,24 +3297,40 @@ const register_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.definePro
   default: register_post
 }, Symbol.toStringTag, { value: 'Module' }));
 
-const images_get = defineEventHandler(async (event) => {
-  const images = await prisma.image.findMany({
-    where: {
-      visibility: "public"
-    },
-    include: {
-      user: {
-        select: {
-          name: true,
-          email: true
+const images_get = defineEventHandler(async () => {
+  try {
+    const images = await prisma.image.findMany({
+      where: {
+        visibility: "public"
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true
+          }
         }
+      },
+      orderBy: {
+        createdAt: "desc"
       }
-    },
-    orderBy: {
-      createdAt: "desc"
-    }
-  });
-  return images;
+    });
+    const safeImages = images.map((img) => {
+      var _a;
+      return {
+        ...img,
+        updatedAt: (_a = img.updatedAt) != null ? _a : img.createdAt
+        // fallback seguro
+      };
+    });
+    return safeImages;
+  } catch (error) {
+    console.error(error);
+    return {
+      error: true,
+      message: error.message || "Error interno"
+    };
+  }
 });
 
 const images_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
@@ -3354,7 +3387,7 @@ const _id__get$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty
   default: _id__get$2
 }, Symbol.toStringTag, { value: 'Module' }));
 
-const _id__put = defineEventHandler(async (event) => {
+const _id__put$2 = defineEventHandler(async (event) => {
   var _a;
   const id = (_a = event.context.params) == null ? void 0 : _a.id;
   const body = await readBody(event);
@@ -3380,9 +3413,9 @@ const _id__put = defineEventHandler(async (event) => {
   }
 });
 
-const _id__put$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+const _id__put$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
-  default: _id__put
+  default: _id__put$2
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const _slug__get$2 = defineEventHandler(async (event) => {
@@ -3586,6 +3619,63 @@ const test_get = defineEventHandler(() => ({ ok: true, message: "Test endpoint w
 const test_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
   default: test_get
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _id__put = defineEventHandler(async (event) => {
+  var _a;
+  const user = event.context.user;
+  if (!user || user.role !== "admin") {
+    throw createError({ statusCode: 403, statusMessage: "Forbidden" });
+  }
+  const id = (_a = event.context.params) == null ? void 0 : _a.id;
+  const body = await readBody(event);
+  if (!id) {
+    throw createError({ statusCode: 400, statusMessage: "ID requerido" });
+  }
+  const updated = await prisma.user.update({
+    where: { id },
+    data: {
+      name: body.name,
+      email: body.email,
+      role: body.role
+    }
+  });
+  return { success: true, user: updated };
+});
+
+const _id__put$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _id__put
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const resetPassword_post = defineEventHandler(async (event) => {
+  var _a;
+  const user = event.context.user;
+  if (!user || user.role !== "admin") {
+    throw createError({ statusCode: 403, statusMessage: "Forbidden" });
+  }
+  const id = (_a = event.context.params) == null ? void 0 : _a.id;
+  if (!id) {
+    throw createError({ statusCode: 400, statusMessage: "ID requerido" });
+  }
+  const newPassword = "12345678";
+  const hashed = await bcrypt.hash(newPassword, 10);
+  await prisma.user.update({
+    where: { id },
+    data: {
+      password: hashed
+    }
+  });
+  return {
+    success: true,
+    message: "Contrase\xF1a reseteada",
+    tempPassword: newPassword
+  };
+});
+
+const resetPassword_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: resetPassword_post
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const profile_get = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({

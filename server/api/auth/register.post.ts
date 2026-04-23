@@ -6,7 +6,10 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event)
 
     if (!body.email || !body.password) {
-      throw createError({ statusCode: 400, statusMessage: 'Datos incompletos' })
+      throw createError({
+        statusCode: 400,
+        message: 'Datos incompletos'
+      })
     }
 
     const existe = await prisma.user.findUnique({
@@ -16,7 +19,7 @@ export default defineEventHandler(async (event) => {
     if (existe) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Este correo electrónico ya está registrado'
+        message: 'Este correo ya está registrado'
       })
     }
 
@@ -38,10 +41,11 @@ export default defineEventHandler(async (event) => {
         email: user.email
       }
     }
+
   } catch (error: any) {
     throw createError({
       statusCode: error.statusCode || 500,
-      statusMessage: error.statusMessage || 'Error en el servidor'
+      message: error.message || 'Error en el servidor'
     })
   }
 })
