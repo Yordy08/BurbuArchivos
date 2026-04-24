@@ -5,7 +5,7 @@
         "../node_modules/@unhead/vue"
       ],
       "@nuxt/devtools": [
-        "../node_modules/nuxt/node_modules/@nuxt/devtools"
+        "../node_modules/@nuxt/devtools"
       ],
       "vue": [
         "../node_modules/vue"
@@ -125,7 +125,7 @@
         "./imports"
       ],
       "#app-manifest": [
-        "./manifest/meta/f51b4006-148b-48f9-91e3-3c0b2bfc9580.json"
+        "./manifest/meta/d48a62a9-222f-4b7d-b60a-a98de1da5334.json"
       ],
       "#components": [
         "./components"
@@ -170,8 +170,6 @@
     "../**/*",
     "../.config/nuxt.*",
     "./nuxt.d.ts",
-    "../node_modules/nuxt/node_modules/runtime",
-    "../node_modules/nuxt/node_modules/dist/runtime",
     "../node_modules/runtime",
     "../node_modules/dist/runtime",
     ".."
@@ -179,8 +177,6 @@
   "exclude": [
     "../dist",
     "../.data",
-    "../node_modules/nuxt/node_modules/runtime/server",
-    "../node_modules/nuxt/node_modules/dist/runtime/server",
     "../node_modules/runtime/server",
     "../node_modules/dist/runtime/server",
     "../.output"

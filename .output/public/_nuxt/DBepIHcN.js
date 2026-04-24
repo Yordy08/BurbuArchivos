@@ -1,1 +1,0 @@
-import{_ as t,c as a,a as s,o as n}from"./DgZMw5Go.js";const o={class:"container mt-5"},c={__name:"index",setup(r){return(_,e)=>(n(),a("div",o,[...e[0]||(e[0]=[s("h1",null,"Panel de Administración",-1),s("p",null,"Gestión del sistema",-1)])]))}},d=t(c,[["__scopeId","data-v-e4e1caae"]]);export{d as default};
