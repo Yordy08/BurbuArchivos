@@ -2,9 +2,9 @@
   "name": "burbuarchivos",
   "private": true,
   "scripts": {
-    "dev": "set \"NODE_OPTIONS=--max-old-space-size=4096\" && nuxt dev",
-    "build": "nuxt build",
-    "preview": "nuxt preview",
+  "dev": "npx nuxt dev",
+   "build": "npx nuxt build",
+    "preview": "npx nuxt preview",
     "prisma:generate": "prisma generate"
   },
   "dependencies": {
