@@ -2,9 +2,11 @@
   "name": "burbuarchivos",
   "private": true,
   "scripts": {
-  "dev": "npx nuxt dev",
-   "build": "npx nuxt build",
-    "preview": "npx nuxt preview",
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
     "prisma:generate": "prisma generate"
   },
   "dependencies": {
@@ -25,5 +27,8 @@
     "nodemon": "^3.1.14",
     "prisma": "^6.19.3",
     "ts-node": "^10.9.2"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
