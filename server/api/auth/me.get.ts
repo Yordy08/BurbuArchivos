@@ -14,7 +14,20 @@ export default defineEventHandler(async (event) => {
       id: true,
       name: true,
       email: true,
-      role: true
+      role: true,
+      images: {
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          urlOriginal: true,
+          downloads: true,
+          createdAt: true
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      }
     }
   })
 

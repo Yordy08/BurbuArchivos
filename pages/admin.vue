@@ -22,14 +22,7 @@
         </div>
       </div>
 
-      <div class="col-md-3">
-        <div class="card bg-info text-white">
-          <div class="card-body">
-            <h5 class="card-title">Usuarios</h5>
-            <p class="card-text fs-4">{{ stats.totalUsers }}</p>
-          </div>
-        </div>
-      </div>
+      
 
       <div class="col-md-3">
         <div class="card bg-warning text-dark">

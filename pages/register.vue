@@ -66,7 +66,7 @@ const register = async () => {
   display:flex;
   justify-content:center;
   align-items:center;
-  background:#ffffff;
+  background:rgba(255,255,255,0.6);
   padding:20px;
   font-family:Arial, Helvetica, sans-serif;
 }
@@ -74,7 +74,7 @@ const register = async () => {
 .box{
   width:100%;
   max-width:420px;
-  background:#ece3e5;
+  background:rgba(236,227,229,0.85);
   padding:35px;
   border-radius:16px;
   box-shadow:0 10px 25px rgba(0,0,0,.08);

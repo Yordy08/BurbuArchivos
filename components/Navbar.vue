@@ -3,7 +3,7 @@
     <div class="container-fluid">
 
       <NuxtLink class="navbar-brand" to="/">
-        BurbuArchivos
+        Burbu | Archivos
       </NuxtLink>
 
       <!-- 🔥 BOTÓN HAMBURGUESA -->
@@ -20,21 +20,27 @@
       </button>
 
       <!-- 🔥 CONTENIDO COLAPSABLE -->
-      <div class="collapse navbar-collapse" id="navbarContent">
+      <div class="collapse navbar-collapse" id="navbarContent" ref="navbarCollapse">
 
         <!-- IZQUIERDA -->
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <NuxtLink class="nav-link" to="/">Inicio</NuxtLink>
+            <NuxtLink class="nav-link" to="/" @click="closeMenu">Inicio</NuxtLink>
           </li>
 
           <li class="nav-item">
-            <NuxtLink class="nav-link" to="/galeria">Galería</NuxtLink>
+            <NuxtLink class="nav-link" to="/galeria" @click="closeMenu">Galería</NuxtLink>
           </li>
 
           <li class="nav-item" v-if="isLoggedIn">
-            <NuxtLink class="nav-link" to="/subir">
+            <NuxtLink class="nav-link" to="/subir" @click="closeMenu">
               Subir
+            </NuxtLink>
+          </li>
+
+             <li class="nav-item" v-if="isLoggedIn">
+            <NuxtLink class="nav-link" to="/adminpro" @click="closeMenu">
+              Dashboard
             </NuxtLink>
           </li>
         </ul>
@@ -43,7 +49,7 @@
         <ul class="navbar-nav mb-2 mb-lg-0">
 
           <li class="nav-item" v-if="!isLoggedIn">
-            <NuxtLink class="nav-link" to="/login">
+            <NuxtLink class="nav-link" to="/login" @click="closeMenu">
               Login
             </NuxtLink>
           </li>
@@ -62,13 +68,13 @@
             <ul class="dropdown-menu dropdown-menu-end">
 
               <li>
-                <NuxtLink class="dropdown-item" to="/perfil">
+                <NuxtLink class="dropdown-item" to="/perfil" @click="closeMenu">
                   Perfil
                 </NuxtLink>
               </li>
 
               <li v-if="user?.role === 'admin'">
-                <NuxtLink class="dropdown-item" to="/admin">
+                <NuxtLink class="dropdown-item" to="/admin" @click="closeMenu">
                   Admin
                 </NuxtLink>
               </li>
@@ -98,6 +104,15 @@ import { navigateTo } from '#app'
 
 const isLoggedIn = ref(false)
 const user = ref(null)
+
+/* 🔥 CERRAR MENÚ MÓVIL */
+const closeMenu = () => {
+  const toggler = document.querySelector('[data-bs-target="#navbarContent"]')
+  const menu = document.getElementById('navbarContent')
+  if (menu?.classList.contains('show') && toggler) {
+    toggler.click()
+  }
+}
 
 /* 🔥 CARGAR USUARIO */
 const loadUser = async () => {
@@ -130,6 +145,7 @@ onMounted(() => {
 
 /* 🔥 LOGOUT */
 const logout = async () => {
+  closeMenu()
   await fetch('/api/auth/logout', {
     method: 'POST',
     credentials: 'include'

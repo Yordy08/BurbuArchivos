@@ -12,11 +12,6 @@
   justify-content:center;
   padding:20px;
 
-  /* Paleta solicitada */
-  background:
-    linear-gradient(135deg,
-      #ffffff 0%,
-      #ece3e5 35%,
-      );
+  background:rgba(255,255,255,0.6);
 }
 </style>

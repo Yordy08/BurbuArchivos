@@ -32,11 +32,33 @@
 ========================= */
 
 body {
-  background: var(--soft-bg);
+  margin: 0;
   color: var(--soft-black);
   font-family: var(--font-main);
+  position: relative;
+  min-height: 100vh;
 }
 
+/* Fondo con blur */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: url('https://res.cloudinary.com/dnf00mh7g/image/upload/v1776956230/Copia_de_Copia_de_Plantilla_WEB_Banner_para_YouTube_1_hmd2we.png')
+    no-repeat center center;
+
+  background-size: cover;
+
+  filter: blur(6px);
+  transform: scale(1.05); /* evita bordes del blur */
+  z-index: -1;
+}
+/* =========================
+   ESTILOS GLOBALES PERSONALIZADOS  
 /* LINKS */
 a {
   color: var(--primary-red);
@@ -89,4 +111,27 @@ a:hover {
 
 .bg-soft {
   background: var(--soft-bg);
+}
+
+/* =========================
+   LAYOUT — FOOTER ABAJO
+========================= */
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main.content {
+  flex: 1 0 auto;
+}
+
+footer {
+  flex-shrink: 0;
 }

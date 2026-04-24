@@ -1,12 +1,13 @@
-# Plan de implementación - AdminPro
+# TODO: Fondo global para todas las vistas
 
-1. [x] Actualizar `server/api/admin/users.get.ts` para incluir `totalUsers`
-2. [x] Crear `server/api/admin/users/[id].put.ts` para editar usuario (nombre, email, rol, contraseña opcional)
-3. [x] Crear `server/api/admin/users/[id]/reset-password.post.ts` para resetear contraseña
-4. [x] Actualizar `pages/adminpro.vue`:
-   - Usar `totalUsers` de la API
-   - Agregar campo de contraseña editable
-   - Enviar contraseña en `updateUser`
-   - Mostrar alertas de éxito/error
-5. [ ] Probar cambios
+- [x] 1. Actualizar `assets/css/global.css` — poner imagen de Cloudinary como fondo de `body`
+- [x] 2. Actualizar `pages/index.vue` — quitar `bg-light`/`bg-white` y usar fondos semi-transparentes
+- [x] 3. Actualizar `pages/login.vue` — quitar degradado sólido y usar fondo semi-transparente
+- [x] 4. Actualizar `pages/register.vue` — quitar fondos sólidos y usar fondos semi-transparentes
+
+# TODO: Footer siempre abajo
+
+- [x] 1. Agregar estilos CSS en `assets/css/global.css` para layout flexbox (html/body height, .app-layout flex column, main.content flex-grow, footer flex-shrink)
+- [x] 2. Verificar visualmente que el footer quede abajo en vistas con poco contenido
+
 

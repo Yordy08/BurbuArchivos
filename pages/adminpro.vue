@@ -3,9 +3,7 @@
 
     <!-- HEADER -->
     <div class="text-center mb-5">
-      <h1 class="fw-bold text-danger">
-        🛡️ Panel Admin Pro
-      </h1>
+     
       <p class="text-muted">
         Gestión de usuarios y estadísticas del sistema
       </p>

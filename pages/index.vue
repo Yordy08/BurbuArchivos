@@ -1,8 +1,8 @@
 <template>
-  <div class="container-fluid min-vh-100 bg-light">
+  <div class="container-fluid min-vh-100" style="background:rgba(250,250,250,0.75);">
 
     <!-- TÍTULO + BUSCADOR -->
-    <section class="py-4 bg-white">
+    <section class="py-4" style="background:rgba(255,255,255,0.6);">
 
       <div class="container text-center mb-4">
 

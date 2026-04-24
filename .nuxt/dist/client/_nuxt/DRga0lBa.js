@@ -1,0 +1,1 @@
+import{_ as t,c as a,a as e,o}from"./DgZMw5Go.js";const r={class:"container mt-5"},n={__name:"users",setup(c){return(_,s)=>(o(),a("div",r,[...s[0]||(s[0]=[e("h1",null,"Gestión de Usuarios",-1),e("p",null,"Administrar usuarios del sistema",-1)])]))}},u=t(n,[["__scopeId","data-v-eeec6003"]]);export{u as default};
