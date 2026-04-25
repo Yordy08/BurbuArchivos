@@ -2,11 +2,12 @@
   "name": "burbuarchivos",
   "private": true,
   "scripts": {
-    "build": "npx nuxt prepare && npx nuxt build",
-    "dev": "npx nuxt dev",
-    "generate": "npx nuxt generate",
-    "preview": "npx nuxt preview",
-    "prisma:generate": "npx prisma generate"
+    "build": "nuxt prepare && nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "prisma:generate": "prisma generate",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",

@@ -1,1 +1,0 @@
-import{_ as o,c as s,a as e,o as t}from"./Dil07hlJ.js";const n={class:"container mt-5"},r={__name:"dashboard",setup(c){return(d,a)=>(t(),s("div",n,[...a[0]||(a[0]=[e("h1",null,"Dashboard",-1),e("p",null,"Bienvenido al panel de control",-1)])]))}},l=o(r,[["__scopeId","data-v-a7a80f19"]]);export{l as default};
