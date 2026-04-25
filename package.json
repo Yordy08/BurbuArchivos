@@ -2,7 +2,7 @@
   "name": "burbuarchivos",
   "private": true,
   "scripts": {
-    "build": "nuxt prepare && nuxt build",
+    "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
@@ -29,6 +29,6 @@
     "ts-node": "^10.9.2"
   },
   "engines": {
-    "node": "22.x"
+    "node": "20.x"
   }
 }
