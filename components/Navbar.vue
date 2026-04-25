@@ -6,7 +6,7 @@
         Burbu | Archivos
       </NuxtLink>
 
-      <!-- 🔥 BOTÓN HAMBURGUESA -->
+      <!-- BOTÓN HAMBURGUESA -->
       <button
         class="navbar-toggler"
         type="button"
@@ -19,41 +19,58 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <!-- 🔥 CONTENIDO COLAPSABLE -->
-      <div class="collapse navbar-collapse" id="navbarContent" ref="navbarCollapse">
+      <!-- CONTENIDO -->
+      <div class="collapse navbar-collapse" id="navbarContent">
 
         <!-- IZQUIERDA -->
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
           <li class="nav-item">
-            <NuxtLink class="nav-link" to="/" @click="closeMenu">Inicio</NuxtLink>
+            <NuxtLink class="nav-link" to="/" @click="closeMenu">
+              Inicio
+            </NuxtLink>
           </li>
 
           <li class="nav-item">
-            <NuxtLink class="nav-link" to="/galeria" @click="closeMenu">Galería</NuxtLink>
+            <NuxtLink class="nav-link" to="/galeria" @click="closeMenu">
+              Galería
+            </NuxtLink>
           </li>
 
+          <!-- SUBIR -->
           <li class="nav-item" v-if="isLoggedIn">
             <NuxtLink class="nav-link" to="/subir" @click="closeMenu">
               Subir
             </NuxtLink>
           </li>
 
-             <li class="nav-item" v-if="isLoggedIn">
+          <!-- ADMIN (cualquier logueado) -->
+          <li class="nav-item" v-if="isLoggedIn">
+            <NuxtLink class="nav-link" to="/admin" @click="closeMenu">
+              Admin
+            </NuxtLink>
+          </li>
+
+          <!-- ADMIN PRO (solo admin real) -->
+          <li class="nav-item" v-if="isAdmin">
             <NuxtLink class="nav-link" to="/adminpro" @click="closeMenu">
               Dashboard
             </NuxtLink>
           </li>
+
         </ul>
 
         <!-- DERECHA -->
         <ul class="navbar-nav mb-2 mb-lg-0">
 
+          <!-- LOGIN -->
           <li class="nav-item" v-if="!isLoggedIn">
             <NuxtLink class="nav-link" to="/login" @click="closeMenu">
               Login
             </NuxtLink>
           </li>
 
+          <!-- USUARIO -->
           <li v-else class="nav-item dropdown">
 
             <a
@@ -73,9 +90,10 @@
                 </NuxtLink>
               </li>
 
-              <li v-if="user?.role === 'admin'">
-                <NuxtLink class="dropdown-item" to="/admin" @click="closeMenu">
-                  Admin
+              <!-- ADMIN PRO SOLO EN DROPDOWN -->
+              <li v-if="isAdmin">
+                <NuxtLink class="dropdown-item" to="/adminpro" @click="closeMenu">
+                  Dashboard
                 </NuxtLink>
               </li>
 
@@ -99,16 +117,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { navigateTo } from '#app'
 
 const isLoggedIn = ref(false)
 const user = ref(null)
 
-/* 🔥 CERRAR MENÚ MÓVIL */
+/* 🔥 REACTIVOS */
+const isAdmin = computed(() => user.value?.role === 'admin')
+
+/* 🔥 CERRAR MENÚ */
 const closeMenu = () => {
-  const toggler = document.querySelector('[data-bs-target="#navbarContent"]')
   const menu = document.getElementById('navbarContent')
+  const toggler = document.querySelector('[data-bs-target="#navbarContent"]')
+
   if (menu?.classList.contains('show') && toggler) {
     toggler.click()
   }
@@ -146,6 +168,7 @@ onMounted(() => {
 /* 🔥 LOGOUT */
 const logout = async () => {
   closeMenu()
+
   await fetch('/api/auth/logout', {
     method: 'POST',
     credentials: 'include'

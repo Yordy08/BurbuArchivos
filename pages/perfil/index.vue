@@ -11,10 +11,10 @@
     <!-- Perfil -->
     <div v-else-if="user" class="row g-5">
 
-      <!-- Columna izquierda -->
+      <!-- IZQUIERDA -->
       <div class="col-lg-4 d-flex flex-column gap-4">
 
-        <!-- Perfil card -->
+        <!-- CARD PERFIL -->
         <div class="card shadow border-0 rounded-4">
           <div class="card-body text-center p-4">
 
@@ -58,59 +58,9 @@
           </div>
         </div>
 
-        <!-- Editar perfil -->
-        <div class="card shadow border-0 rounded-4">
-          <div class="card-body p-4">
-            <h5 class="fw-bold text-danger mb-3">✏️ Editar Perfil</h5>
-
-            <div v-if="profileMessage" :class="['alert', profileError ? 'alert-danger' : 'alert-success']">
-              {{ profileMessage }}
-            </div>
-
-            <form @submit.prevent="updateProfile" class="d-flex flex-column gap-3">
-
-              <input v-model="profileForm.name" type="text" class="form-control" placeholder="Nombre" required />
-
-              <input v-model="profileForm.email" type="email" class="form-control" placeholder="Correo" required />
-
-              <button type="submit" class="btn btn-danger rounded-pill" :disabled="profileLoading">
-                <span v-if="profileLoading" class="spinner-border spinner-border-sm me-2"></span>
-                Guardar Cambios
-              </button>
-
-            </form>
-          </div>
-        </div>
-
-        <!-- Cambiar contraseña -->
-        <div class="card shadow border-0 rounded-4">
-          <div class="card-body p-4">
-            <h5 class="fw-bold text-danger mb-3">🔒 Contraseña</h5>
-
-            <div v-if="passwordMessage" :class="['alert', passwordError ? 'alert-danger' : 'alert-success']">
-              {{ passwordMessage }}
-            </div>
-
-            <form @submit.prevent="updatePassword" class="d-flex flex-column gap-3">
-
-              <input v-model="passwordForm.currentPassword" type="password" class="form-control" placeholder="Actual" required />
-
-              <input v-model="passwordForm.newPassword" type="password" class="form-control" placeholder="Nueva" required />
-
-              <input v-model="passwordForm.confirmPassword" type="password" class="form-control" placeholder="Confirmar" required />
-
-              <button type="submit" class="btn btn-dark rounded-pill" :disabled="passwordLoading">
-                <span v-if="passwordLoading" class="spinner-border spinner-border-sm me-2"></span>
-                Actualizar
-              </button>
-
-            </form>
-          </div>
-        </div>
-
       </div>
 
-      <!-- Columna derecha -->
+      <!-- DERECHA -->
       <div class="col-lg-8">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -121,7 +71,7 @@
           </NuxtLink>
         </div>
 
-        <!-- Galería -->
+        <!-- GALERÍA -->
         <div v-if="user.images?.length" class="row g-4">
 
           <div
@@ -151,12 +101,13 @@
                   ⬇ {{ image.downloads }} descargas
                 </small>
 
-                <NuxtLink
-                  :to="`/foto/${image.slug}`"
+                <!-- BOTÓN VER (MODAL) -->
+                <button
                   class="btn btn-outline-dark btn-sm w-100 rounded-pill"
+                  @click="openModal(image)"
                 >
                   Ver
-                </NuxtLink>
+                </button>
 
               </div>
 
@@ -173,9 +124,54 @@
 
     </div>
 
-    <!-- No user -->
+    <!-- NO USER -->
     <div v-else class="alert alert-danger text-center">
       Usuario no encontrado o sesión expirada.
+    </div>
+
+    <!-- 🔥 MODAL -->
+    <div
+      v-if="showModal"
+      class="modal fade show d-block"
+      style="background: rgba(0,0,0,0.7);"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+          <!-- HEADER -->
+          <div class="modal-header">
+            <h5 class="modal-title text-danger">
+              {{ selectedImage?.title }}
+            </h5>
+
+            <button class="btn-close" @click="closeModal"></button>
+          </div>
+
+          <!-- BODY -->
+          <div class="modal-body text-center">
+
+            <img
+              :src="selectedImage?.urlOriginal"
+              class="img-fluid rounded"
+              style="max-height:70vh;object-fit:contain;"
+            />
+
+            <p class="mt-3 text-muted">
+              📅 {{ formatDate(selectedImage?.createdAt) }} |
+              ⬇ {{ selectedImage?.downloads }} descargas
+            </p>
+
+          </div>
+
+          <!-- FOOTER -->
+          <div class="modal-footer">
+            <button class="btn btn-dark" @click="closeModal">
+              Cerrar
+            </button>
+          </div>
+
+        </div>
+      </div>
     </div>
 
   </div>
@@ -184,20 +180,15 @@
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
 
-const {
-  data,
-  pending,
-  refresh
-} = await useFetch('/api/auth/me')
+const { data, pending, refresh } = await useFetch('/api/auth/me')
 
 const user = computed(() => data.value?.user || null)
 
 const initials = computed(() => {
   if (!user.value?.name) return 'U'
-
   return user.value.name
     .split(' ')
-    .map(word => word[0])
+    .map(w => w[0])
     .join('')
     .substring(0, 2)
     .toUpperCase()
@@ -205,98 +196,24 @@ const initials = computed(() => {
 
 const totalDownloads = computed(() => {
   if (!user.value?.images) return 0
-
-  return user.value.images.reduce(
-    (total, img) => total + (img.downloads || 0),
-    0
-  )
+  return user.value.images.reduce((t, i) => t + (i.downloads || 0), 0)
 })
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString()
 }
 
-// --- Editar Perfil ---
-const profileForm = reactive({
-  name: '',
-  email: ''
-})
+/* 🔥 MODAL */
+const selectedImage = ref(null)
+const showModal = ref(false)
 
-const profileLoading = ref(false)
-const profileMessage = ref('')
-const profileError = ref(false)
-
-watch(() => user.value, (u) => {
-  if (u) {
-    profileForm.name = u.name || ''
-    profileForm.email = u.email || ''
-  }
-}, { immediate: true })
-
-const updateProfile = async () => {
-  profileLoading.value = true
-  profileMessage.value = ''
-  profileError.value = false
-
-  try {
-    const res = await $fetch('/api/users/me', {
-      method: 'PUT',
-      body: {
-        name: profileForm.name,
-        email: profileForm.email
-      }
-    })
-
-    if (res.success) {
-      profileMessage.value = 'Perfil actualizado correctamente'
-      await refresh()
-    }
-  } catch (err) {
-    profileError.value = true
-    profileMessage.value = err?.data?.statusMessage || 'Error al actualizar el perfil'
-  } finally {
-    profileLoading.value = false
-  }
+const openModal = (image) => {
+  selectedImage.value = image
+  showModal.value = true
 }
 
-// --- Cambiar Contraseña ---
-const passwordForm = reactive({
-  currentPassword: '',
-  newPassword: '',
-  confirmPassword: ''
-})
-
-const passwordLoading = ref(false)
-const passwordMessage = ref('')
-const passwordError = ref(false)
-
-const updatePassword = async () => {
-  passwordLoading.value = true
-  passwordMessage.value = ''
-  passwordError.value = false
-
-  try {
-    const res = await $fetch('/api/users/me/password', {
-      method: 'PUT',
-      body: {
-        currentPassword: passwordForm.currentPassword,
-        newPassword: passwordForm.newPassword,
-        confirmPassword: passwordForm.confirmPassword
-      }
-    })
-
-    if (res.success) {
-      passwordMessage.value = res.message
-      passwordForm.currentPassword = ''
-      passwordForm.newPassword = ''
-      passwordForm.confirmPassword = ''
-    }
-  } catch (err) {
-    passwordError.value = true
-    passwordMessage.value = err?.data?.statusMessage || 'Error al cambiar la contraseña'
-  } finally {
-    passwordLoading.value = false
-  }
+const closeModal = () => {
+  showModal.value = false
+  selectedImage.value = null
 }
 </script>
-
