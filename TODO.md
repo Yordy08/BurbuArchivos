@@ -1,13 +1,31 @@
-# TODO: Fondo global para todas las vistas
+# TODO: Implementar Límites en Upload de Imágenes
 
-- [x] 1. Actualizar `assets/css/global.css` — poner imagen de Cloudinary como fondo de `body`
-- [x] 2. Actualizar `pages/index.vue` — quitar `bg-light`/`bg-white` y usar fondos semi-transparentes
-- [x] 3. Actualizar `pages/login.vue` — quitar degradado sólido y usar fondo semi-transparente
-- [x] 4. Actualizar `pages/register.vue` — quitar fondos sólidos y usar fondos semi-transparentes
+✅ **Completado**
 
-# TODO: Footer siempre abajo
+## Pasos:
 
-- [x] 1. Agregar estilos CSS en `assets/css/global.css` para layout flexbox (html/body height, .app-layout flex column, main.content flex-grow, footer flex-shrink)
-- [x] 2. Verificar visualmente que el footer quede abajo en vistas con poco contenido
+### 1. ✅ Crear/Actualizar TODO.md
+### 2. ✅ Editar server/api/images/upload.post.ts:
+   - Agregar límites a readMultipartFormData (50MB total, 10MB/file)
+   - Chequeo de tamaño por archivo
+   - Config max_file_size en Cloudinary upload_stream
+### 3. ✅ Probar backend completado
 
+**Backend completado.**
+
+## Task completada ✅
+
+**Backend**: Límites 50MB total / 10MB img.
+
+**Frontend** `pages/subir.vue`:
+- ✅ Total size real-time
+- ✅ Heaviest roja si over
+- ✅ Alert EXCEDIDO/OK
+- ✅ **X roja** cada preview para eliminar (recalcula auto)
+- ✅ Block submit
+
+**Prueba completa**:
+- /subir → imgs grandes → **X** elimina, heaviest roja, alert, no submit hasta OK.
+
+¡Sistema upload perfecto!
 

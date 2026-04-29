@@ -82,18 +82,38 @@
             v-if="preview.length"
             class="col-12"
           >
-            <div class="row g-3">
+            <div class="row g-3" style="position: relative;">
               <div
-                class="col-md-3"
+                class="col-md-3 position-relative"
                 v-for="(img,index) in preview"
                 :key="index"
+                :class="{ 'border-danger shadow border-3': index === heaviestIndex && totalSize >= MAX_TOTAL_MB }"
               >
                 <img
                   :src="img"
                   class="img-fluid rounded border"
                   style="height:200px;width:100%;object-fit:cover"
                 />
+                <button
+                  @click="removeImage(index)"
+                  class="btn-close position-absolute top-0 end-0 m-1 bg-danger rounded-circle"
+                  style="width: 25px; height: 25px;"
+                  title="Eliminar imagen"
+                ></button>
+                <small v-if="index === heaviestIndex && totalSize >= MAX_TOTAL_MB" class="d-block text-danger fw-bold text-center">
+                  ❌ {{ Math.round((files[index]?.size || 0) / (1024*1024)) }}MB - Eliminar
+                </small>
               </div>
+            </div>
+          </div>
+
+          <!-- Total Size Warning -->
+          <div v-if="preview.length" class="col-12">
+            <div class="alert" :class="totalSize >= MAX_TOTAL_MB ? 'alert-danger' : 'alert-info'">
+              📊 Total: <strong>{{ totalSize }}MB</strong> 
+              <span v-if="totalSize >= MAX_TOTAL_MB" class="badge bg-danger ms-2">¡EXCEDIDO! Elimina la roja</span>
+              <span v-else class="badge bg-success ms-2">OK</span>
+              (Máx {{ MAX_TOTAL_MB }}MB)
             </div>
           </div>
 
@@ -101,7 +121,7 @@
           <div class="col-12 text-end">
             <button
               class="btn btn-danger px-4"
-              :disabled="subiendo"
+              :disabled="subiendo || (totalSize >= MAX_TOTAL_MB)"
             >
               {{ subiendo ? 'Subiendo...' : 'Guardar Imágenes' }}
             </button>
@@ -131,6 +151,21 @@ const files = ref([])
 const preview = ref([])
 const subiendo = ref(false)
 
+const totalSize = ref(0)
+const heaviestIndex = ref(-1)
+const MAX_TOTAL_MB = 50
+
+const removeImage = (index) => {
+  // Revoke URL to avoid memory leak
+  URL.revokeObjectURL(preview.value[index])
+  
+  files.value.splice(index, 1)
+  preview.value.splice(index, 1)
+  
+  // Recalcular
+  seleccionarArchivos({ target: { files: files.value } })
+}
+
 watch(title, (val) => {
   slug.value = slugify(val, {
     lower: true,
@@ -158,13 +193,36 @@ const seleccionarArchivos = (e) => {
   preview.value = files.value.map(file =>
     URL.createObjectURL(file)
   )
+
+  // Calcular total size y heaviest
+  let sumSize = 0
+  let heaviestIdx = -1
+  let maxSize = 0
+  files.value.forEach((file, idx) => {
+    const sizeMB = file.size / (1024 * 1024)
+    sumSize += sizeMB
+    if (sizeMB > maxSize) {
+      maxSize = sizeMB
+      heaviestIdx = idx
+    }
+  })
+  totalSize.value = sumSize.toFixed(1)
+  heaviestIndex.value = heaviestIdx
 }
+
 
 const subirImagenes = async () => {
   if (!files.value.length) {
     return Swal.fire({
       icon: 'warning',
       title: 'Selecciona imágenes'
+    })
+  }
+  if (totalSize >= MAX_TOTAL_MB) {
+    return Swal.fire({
+      icon: 'warning',
+      title: '¡Límite excedido!',
+      text: `Total ${totalSize}MB excede ${MAX_TOTAL_MB}MB. Elimina la imagen marcada en rojo.`
     })
   }
 

@@ -39,7 +39,10 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    const form = await readMultipartFormData(event)
+    const form = await readMultipartFormData(event, {
+      maxTotalSize: 50 * 1024 * 1024, // 50MB total
+      maxFileSize: 10 * 1024 * 1024,  // 10MB per file
+    })
 
     if (!form) {
       throw createError({
@@ -62,6 +65,17 @@ export default defineEventHandler(async (event) => {
 
     const files = form.filter(f => f.name === 'images')
 
+    // Check individual file sizes
+    const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+    for (const file of files) {
+      if (file.data.length > MAX_FILE_SIZE) {
+        throw createError({
+          statusCode: 400,
+          statusMessage: `Imagen demasiado grande: ${Math.round(file.data.length / 1024 / 1024)}MB (máx 10MB)`
+        })
+      }
+    }
+
     if (!files.length) {
       throw createError({
         statusCode: 400,
@@ -76,7 +90,8 @@ export default defineEventHandler(async (event) => {
             {
               folder: 'burbuarchivos',
               public_id: `image_${Date.now()}_${index}`,
-              resource_type: 'image'
+              resource_type: 'image',
+              max_file_size: 10 * 1024 * 1024 // 10MB Cloudinary limit
             },
             (error, result) => {
               if (error) reject(error)
