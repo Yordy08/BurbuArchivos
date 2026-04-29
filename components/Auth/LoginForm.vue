@@ -94,8 +94,8 @@ const login = async () => {
       throw new Error(data.message || 'Error al iniciar sesión')
     }
 
-    // Redirigir a subir después del login exitoso
-    await navigateTo('/subir')
+// Redirigir a la página principal
+    window.location.href = '/'
 
   } catch (err: any) {
     error.value = err.message || 'Error al iniciar sesión. Verifica tus credenciales.'
