@@ -10,58 +10,20 @@
         <form @submit.prevent="subirImagenes" class="row g-4">
 
           <!-- Titulo -->
-          <div class="col-md-6">
-            <label class="form-label">📝 Título</label>
+          <div class="col-md-12">
+            <label class="form-label">📝 Título *</label>
             <input
               v-model="title"
               type="text"
-              class="form-control"
-              placeholder="Título general"
+              class="form-control form-control-lg"
+              placeholder="Título de las imágenes"
               required
             />
           </div>
 
-          <!-- Slug -->
-          <div class="col-md-6">
-            <label class="form-label">🔗 Slug SEO</label>
-            <input
-              v-model="slug"
-              type="text"
-              class="form-control"
-              readonly
-            />
-          </div>
-
-          <!-- Visibilidad -->
-          <div class="col-md-6">
-            <label class="form-label">🌍 Visibilidad</label>
-            <select v-model="visibility" class="form-select">
-              <option value="public">Público</option>
-              <option value="private">Privado</option>
-            </select>
-          </div>
-
-          <!-- Descarga -->
-          <div class="col-md-3">
-            <label class="form-label">⬇️ Descarga</label>
-            <select v-model="downloadable" class="form-select">
-              <option :value="true">Permitida</option>
-              <option :value="false">Bloqueada</option>
-            </select>
-          </div>
-
-          <!-- SEO -->
-          <div class="col-md-3">
-            <label class="form-label">🚀 SEO</label>
-            <select v-model="seoEnabled" class="form-select">
-              <option :value="true">Activo</option>
-              <option :value="false">Apagado</option>
-            </select>
-          </div>
-
           <!-- Imagenes -->
           <div class="col-12">
-            <label class="form-label">📷 Seleccionar Imágenes</label>
+            <label class="form-label">📷 Seleccionar Imágenes *</label>
 
             <input
               type="file"
@@ -144,7 +106,7 @@ const user = ref(null)
 const title = ref('')
 const slug = ref('')
 const visibility = ref('public')
-const downloadable = ref(false)
+const downloadable = ref(true)
 const seoEnabled = ref(true)
 
 const files = ref([])

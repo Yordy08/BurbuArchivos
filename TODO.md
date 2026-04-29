@@ -13,19 +13,23 @@
 
 **Backend completado.**
 
-## Task completada ✅
+## Upload + Galería completados ✅
 
-**Backend**: Límites 50MB total / 10MB img.
+**Subir.vue**:
+- ✅ Form simple: Título + Imágenes
+- ✅ Defaults ocultos (public, descarga, SEO)
+- ✅ Preview X remove + roja heaviest
+- ✅ Límites 50MB/10MB
 
-**Frontend** `pages/subir.vue`:
-- ✅ Total size real-time
-- ✅ Heaviest roja si over
-- ✅ Alert EXCEDIDO/OK
-- ✅ **X roja** cada preview para eliminar (recalcula auto)
-- ✅ Block submit
+**Galeria.vue** **nueva**:
+- ✅ Álbumes por **título** (igual nombre = carpeta)
+- ✅ Cards folder 📁 + count
+- ✅ Modal álbum → grid imgs → modal full + download
+- ✅ Responsive + danger theme
 
-**Prueba completa**:
-- /subir → imgs grandes → **X** elimina, heaviest roja, alert, no submit hasta OK.
+**Prueba**:
+- `/subir` → up imgs same title
+- `/galeria` → folders by title, explore!
 
-¡Sistema upload perfecto!
+¡Sistema galería completo!
 
