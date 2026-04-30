@@ -35,7 +35,7 @@
             />
 
             <div v-if="subiendo" class="text-info mt-2">
-              Subiendo imágenes...
+              Subiendo imágenes... ({{ uploadProgress }}%)
             </div>
           </div>
 
@@ -64,6 +64,9 @@
                 ></button>
                 <small v-if="index === heaviestIndex && totalSize >= MAX_TOTAL_MB" class="d-block text-danger fw-bold text-center">
                   ❌ {{ Math.round((files[index]?.size || 0) / (1024*1024)) }}MB - Eliminar
+                </small>
+                <small v-if="uploadStatus[index]" class="d-block text-center mt-1" :class="uploadStatus[index].success ? 'text-success' : 'text-danger'">
+                  {{ uploadStatus[index].message }}
                 </small>
               </div>
             </div>
@@ -112,19 +115,20 @@ const seoEnabled = ref(true)
 const files = ref([])
 const preview = ref([])
 const subiendo = ref(false)
+const uploadProgress = ref(0)
+const uploadStatus = ref({})
 
 const totalSize = ref(0)
 const heaviestIndex = ref(-1)
 const MAX_TOTAL_MB = 100
 
 const removeImage = (index) => {
-  // Revoke URL to avoid memory leak
   URL.revokeObjectURL(preview.value[index])
   
   files.value.splice(index, 1)
   preview.value.splice(index, 1)
+  delete uploadStatus.value[index]
   
-  // Recalcular
   seleccionarArchivos({ target: { files: files.value } })
 }
 
@@ -156,7 +160,6 @@ const seleccionarArchivos = (e) => {
     URL.createObjectURL(file)
   )
 
-  // Calcular total size y heaviest
   let sumSize = 0
   let heaviestIdx = -1
   let maxSize = 0
@@ -172,6 +175,32 @@ const seleccionarArchivos = (e) => {
   heaviestIndex.value = heaviestIdx
 }
 
+// Upload single file - CÓDIGO CORRECTO DEL USUARIO
+const uploadToCloudinary = async (file) => {
+  const formData = new FormData()
+  formData.append("file", file)
+  formData.append("upload_preset", "burbu_upload")
+
+  uploadStatus.value[files.value.indexOf(file)] = { message: 'Subiendo...', success: false }
+
+  const res = await fetch(
+    "https://api.cloudinary.com/v1_1/dnf00mh7g/image/upload",
+    {
+      method: "POST",
+      body: formData
+    }
+  )
+
+  if (!res.ok) {
+    throw new Error(`Cloudinary error: ${res.status}`)
+  }
+
+  const data = await res.json()
+  uploadStatus.value[files.value.indexOf(file)] = { message: '✅ Subido', success: true }
+  uploadProgress.value = 100
+  
+  return data
+}
 
 const subirImagenes = async () => {
   if (!files.value.length) {
@@ -180,50 +209,60 @@ const subirImagenes = async () => {
       title: 'Selecciona imágenes'
     })
   }
-  if (totalSize >= MAX_TOTAL_MB) {
+  if (totalSize.value >= MAX_TOTAL_MB) {
     return Swal.fire({
       icon: 'warning',
       title: '¡Límite excedido!',
-      text: `Total ${totalSize}MB excede ${MAX_TOTAL_MB}MB. Elimina la imagen marcada en rojo.`
+      text: `Total ${totalSize.value}MB excede ${MAX_TOTAL_MB}MB`
     })
   }
 
   subiendo.value = true
+  uploadStatus.value = {}
+  uploadProgress.value = 0
 
-  const formData = new FormData()
-
-  files.value.forEach(file => {
-    formData.append('images', file)
-  })
-
-  formData.append('title', title.value)
-  formData.append('slug', slug.value)
-  formData.append('visibility', visibility.value)
-  formData.append('downloadable', downloadable.value.toString())
-  formData.append('seoEnabled', seoEnabled.value.toString())
+  const uploadedUrls = []
 
   try {
-    const res = await fetch('/api/images/upload', {
-      method: 'POST',
-      body: formData
-    })
+    for (let i = 0; i < files.value.length; i++) {
+      const file = files.value[i]
+      uploadStatus.value[i] = { message: 'Preparando...', success: false }
 
-    const data = await res.json()
+      // 1. Upload directo a Cloudinary
+      const cloudRes = await uploadToCloudinary(file)
+      
+      // 2. Guardar en DB
+      const saveRes = await fetch('/api/images/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: title.value,
+          cloudinaryUrl: cloudRes.secure_url,
+          publicId: cloudRes.public_id,
+          visibility: visibility.value,
+          downloadable: downloadable.value,
+          seoEnabled: seoEnabled.value
+        })
+      })
 
-    if (!res.ok) {
-      throw new Error(data.statusMessage || 'Error al subir')
+      if (!saveRes.ok) {
+        const err = await saveRes.json()
+        throw new Error(err.statusMessage || 'Error al guardar')
+      }
+
+      const savedImage = await saveRes.json()
+      uploadedUrls.push(savedImage.image)
     }
 
     Swal.fire({
       icon: 'success',
-      title: 'Imágenes guardadas',
-      text: `${data.total} imagen(es) subida(s)`,
-      timer: 2000,
-      showConfirmButton: false
+      title: '¡ÉXITO!',
+      text: `${uploadedUrls.length} imagen(es) subidas`,
+      timer: 2000
     })
 
+    // Reset
     title.value = ''
-    slug.value = ''
     files.value = []
     preview.value = []
 
@@ -233,8 +272,10 @@ const subirImagenes = async () => {
       title: 'Error',
       text: err.message
     })
+    console.error(err)
   } finally {
     subiendo.value = false
   }
 }
 </script>
+

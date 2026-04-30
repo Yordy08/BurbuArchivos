@@ -1,35 +1,13 @@
-# TODO: Implementar Límites en Upload de Imágenes
+# TODO - Signed Upload Implementation
 
-✅ **Completado**
+## Plan
+1. ✅ Create `/server/api/images/sign-upload.post.ts` - Returns signed URL for direct Cloudinary upload
+2. ✅ Create `/server/api/images/save.post.ts` - Saves the Cloudinary URL to DB
+3. ✅ Update `/pages/subir.vue` - Change frontend to use signed upload pattern
 
-## Pasos:
+## Status: ✅ COMPLETED
 
-### 1. ✅ Crear/Actualizar TODO.md
-### 2. ✅ Editar server/api/images/upload.post.ts:
-   - Agregar límites a readMultipartFormData (50MB total, 10MB/file)
-   - Chequeo de tamaño por archivo
-   - Config max_file_size en Cloudinary upload_stream
-### 3. ✅ Probar backend completado
-
-**Backend completado.**
-
-## Upload + Galería completados ✅
-
-**Subir.vue**:
-- ✅ Form simple: Título + Imágenes
-- ✅ Defaults ocultos (public, descarga, SEO)
-- ✅ Preview X remove + roja heaviest
-- ✅ Límites 50MB/10MB
-
-**Galeria.vue** **nueva**:
-- ✅ Álbumes por **título** (igual nombre = carpeta)
-- ✅ Cards folder 📁 + count
-- ✅ Modal álbum → grid imgs → modal full + download
-- ✅ Responsive + danger theme
-
-**Prueba**:
-- `/subir` → up imgs same title
-- `/galeria` → folders by title, explore!
-
-¡Sistema galería completo!
-
+### New Flow:
+1. Vue → Backend (get signed URL) → Vue gets signature
+2. Vue uploads directly to Cloudinary using the signed URL
+3. Vue → Backend (save URL to DB) → Image saved to MongoDB
