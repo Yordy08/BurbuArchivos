@@ -39,9 +39,9 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    const form = await readMultipartFormData(event, {
-      maxTotalSize: 50 * 1024 * 1024, // 50MB total
-      maxFileSize: 10 * 1024 * 1024,  // 10MB per file
+const form = await readMultipartFormData(event, {
+      maxTotalSize: 100 * 1024 * 1024, // 100MB total
+      maxFileSize: 25 * 1024 * 1024,  // 25MB per file
     })
 
     if (!form) {
@@ -65,13 +65,13 @@ export default defineEventHandler(async (event) => {
 
     const files = form.filter(f => f.name === 'images')
 
-    // Check individual file sizes
-    const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+// Check individual file sizes
+    const MAX_FILE_SIZE = 25 * 1024 * 1024 // 25MB
     for (const file of files) {
       if (file.data.length > MAX_FILE_SIZE) {
         throw createError({
           statusCode: 400,
-          statusMessage: `Imagen demasiado grande: ${Math.round(file.data.length / 1024 / 1024)}MB (máx 10MB)`
+          statusMessage: `Imagen demasiado grande: ${Math.round(file.data.length / 1024 / 1024)}MB (máx 25MB)`
         })
       }
     }
@@ -91,7 +91,7 @@ export default defineEventHandler(async (event) => {
               folder: 'burbuarchivos',
               public_id: `image_${Date.now()}_${index}`,
               resource_type: 'image',
-              max_file_size: 10 * 1024 * 1024 // 10MB Cloudinary limit
+max_file_size: 25 * 1024 * 1024 // 25MB Cloudinary limit
             },
             (error, result) => {
               if (error) reject(error)

@@ -115,7 +115,7 @@ const subiendo = ref(false)
 
 const totalSize = ref(0)
 const heaviestIndex = ref(-1)
-const MAX_TOTAL_MB = 50
+const MAX_TOTAL_MB = 100
 
 const removeImage = (index) => {
   // Revoke URL to avoid memory leak
